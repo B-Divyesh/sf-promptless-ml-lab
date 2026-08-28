@@ -8,7 +8,8 @@
 - A one-click `/demo` workbench with a persistent sample-data banner, a separate
   `demo:seeded-ml-runs` namespace, Reset demo, and Start for real.
 - Fixed toy datasets, expected results, deterministic seven-step traces, hidden
-  operation checks, local replay records, and JSON run-record export.
+  operation checks in a dedicated browser worker, local replay records, and JSON
+  run-record export.
 - Offline reload after a first visit through a small same-origin service worker.
 - `/privacy`, `/terms`, and a styled static 404 page with real history routes.
 - A product-specific concrete-and-moss visual system. The original hero art is
@@ -39,9 +40,9 @@ Verified on 2026-08-28:
 - Lighthouse against the built landing page: Performance 99, Accessibility 100,
   Best Practices 100, SEO 100; LCP 2,018 ms and CLS 0. The browser run used the
   local Chromium binary with `--disable-dev-shm-usage`.
-- Initial production JS is 8.24 KB gzip and CSS is 3.01 KB gzip. Hero WebP is
-  155 KB. No remote fonts, scripts, analytics, or runtime network origins are
-  used.
+- Initial production JS is 8.31 KB gzip plus a 0.31 KB worker, and CSS is 3.01
+  KB gzip. Hero WebP is 155 KB. No remote fonts, scripts, analytics, or runtime
+  network origins are used.
 
 ## Known gaps / next steps
 
