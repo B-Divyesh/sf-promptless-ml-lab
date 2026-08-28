@@ -1,0 +1,37 @@
+[
+  {
+    "id": "local-browser-runs",
+    "claim": "Runs stay in this browser.",
+    "where": "landing facts, privacy page",
+    "test": "npm test -- --grep @claim:local-browser-runs",
+    "sandbox": "fresh browser context; complete a demo drill; intercept every request and assert same-origin only"
+  },
+  {
+    "id": "export-record",
+    "claim": "Export the run record when the check passes.",
+    "where": "landing steps, workbench export button",
+    "test": "npm test -- --grep @claim:export-record",
+    "sandbox": "fresh demo; pass one drill; download JSON and assert seed, pass state, and seven trace points"
+  },
+  {
+    "id": "demo-reset",
+    "claim": "Demo — sample data, nothing is saved.",
+    "where": "demo banner",
+    "test": "npm test -- --grep @claim:demo-reset",
+    "sandbox": "fresh demo; create a run; reset demo; assert only demo storage is removed and real storage remains untouched"
+  },
+  {
+    "id": "offline-reload",
+    "claim": "Works offline after your first visit.",
+    "where": "landing facts, workbench status",
+    "test": "npm test -- --grep @claim:offline-reload",
+    "sandbox": "fresh browser context; visit landing and demo; set offline; reload demo; assert workbench heading"
+  },
+  {
+    "id": "thirty-open-drills",
+    "claim": "All 30 drills are open.",
+    "where": "landing facts",
+    "test": "npm test -- --grep @claim:thirty-open-drills",
+    "sandbox": "fresh demo; assert the drill catalog contains exactly 30 drill controls"
+  }
+]
