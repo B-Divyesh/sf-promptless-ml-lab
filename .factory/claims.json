@@ -33,5 +33,26 @@
     "where": "landing facts",
     "test": "npm test -- --grep @claim:thirty-open-drills",
     "sandbox": "fresh demo; assert the drill catalog contains exactly 30 drill controls"
+  },
+  {
+    "id": "checker-recognizes-operation",
+    "claim": "The browser check recognizes the required operation.",
+    "where": "landing limitation, README",
+    "test": "npm test -- --grep @claim:checker-recognizes-operation",
+    "sandbox": "fresh demo; submit code without the tensor-shape operation and observe Not yet; submit x.shape and observe Passed"
+  },
+  {
+    "id": "deterministic-trace",
+    "claim": "The browser check replays a deterministic trace.",
+    "where": "landing limitation, workbench help, README",
+    "test": "npm test -- --grep @claim:deterministic-trace",
+    "sandbox": "fresh demo; pass the first drill twice; export records and assert both seven-point traces are identical"
+  },
+  {
+    "id": "no-arbitrary-pytorch",
+    "claim": "The browser check does not execute arbitrary Python or PyTorch.",
+    "where": "landing limitation, terms, README",
+    "test": "npm test -- --grep @claim:no-arbitrary-pytorch",
+    "sandbox": "fresh demo; submit a Python raise statement plus the required operation; assert the check passes and the browser raises no execution error"
   }
 ]
