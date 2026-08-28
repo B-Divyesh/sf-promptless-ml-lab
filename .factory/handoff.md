@@ -66,12 +66,18 @@ Verified on 2026-08-28:
 
 ## Deployment
 
-Deploy `dist/` as the Static Web Apps artifact. The committed
-`staticwebapp.config.json` is copied into `dist/` and contains the required
-route rewrites, real 404 override, caching, and security headers.
+The repair commit was pushed to `origin/main`. A production `swa deploy dist` attempt
+loaded the committed Static Web Apps configuration but could not continue
+because this work order did not provide `SWA_CLI_DEPLOYMENT_TOKEN`, a Static
+Web App resource group, or a deployable app credential. The CLI reported
+`deployment_token was not provided`; no partial deployment occurred. The
+factory deployment can use `dist/` directly. Its committed
+`staticwebapp.config.json` contains the required route rewrites, real 404
+override, caching, and security headers.
 
 ## Known gaps
 
-None for this repair. The deliberate checker limitation remains: it recognizes
-the required operation and replays a fixed trace; it does not execute arbitrary
+The repair has no product gaps. Deployment remains pending factory credentials
+as noted above. The deliberate checker limitation remains: it recognizes the
+required operation and replays a fixed trace; it does not execute arbitrary
 Python or PyTorch. This is disclosed and now has claim coverage.
