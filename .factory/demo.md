@@ -10,7 +10,7 @@ submits one intended answer and one unrelated shortcut for every drill.
 
 Demo run records are stored only under `demo:seeded-ml-runs` in browser local
 storage. Real mode uses `real:seeded-ml-runs`; demo never reads or writes that
-key. **Reset demo** removes the demo key. **Start for real** discards the demo
-key before routing to `/lab`, the real workbench, and changes storage namespaces. The app shell and sample metadata are
-cached by its service worker after the first visit, so the demo can be reloaded
-offline.
+key. **Reset demo** removes the demo key. **Open your real workbench** discards
+the demo key before routing to `/lab`, the real workbench, and changes storage
+namespaces. The app shell and sample metadata are cached by its service worker
+after the first visit, so the demo can be reloaded offline.

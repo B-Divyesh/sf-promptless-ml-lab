@@ -21,6 +21,20 @@
     "sandbox": "fresh demo; create a run; reset demo; assert only demo storage is removed and real storage remains untouched"
   },
   {
+    "id": "one-click-sample",
+    "claim": "Try it with sample data opens a seeded drill and local run record.",
+    "where": "landing primary action and note, README Try the sample",
+    "test": "npm test -- --grep @claim:one-click-sample",
+    "sandbox": "fresh landing; click the primary action; assert /demo, persistent banner, tensor-shape fixture, demo-key write, and untouched real-key sentinel"
+  },
+  {
+    "id": "no-third-party-runtime",
+    "claim": "The project uses no runtime third-party scripts, remote fonts, or analytics.",
+    "where": "README Test and build",
+    "test": "npm test -- --grep @claim:no-third-party-runtime",
+    "sandbox": "fresh landing and demo navigation; record all requests and assert every resource, including scripts, styles, and fonts, is same-origin"
+  },
+  {
     "id": "offline-reload",
     "claim": "Works offline after your first visit.",
     "where": "landing facts, workbench status",
@@ -78,7 +92,7 @@
   },
   {
     "id": "real-workbench",
-    "claim": "Start for real opens a separate real workbench.",
+    "claim": "Open your real workbench opens a separate real workbench.",
     "where": "demo banner, demo documentation, README",
     "test": "npm test -- --grep @claim:real-workbench",
     "sandbox": "fresh demo; select Start for real; pass one drill; assert the real key is written and the demo key is untouched"

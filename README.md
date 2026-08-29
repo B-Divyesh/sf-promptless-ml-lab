@@ -2,8 +2,8 @@
 
 Practice reproducible ML models in short, fixed exercises.
 
-Seeded ML Drills is for self-taught machine-learning practitioners who want a
-small, repeatable PyTorch task without choosing a project or asking a chatbot.
+Seeded ML Drills gives self-taught ML learners one small PyTorch task with an
+immediate check. You do not need to choose a project or ask a chatbot.
 It has 30 drills with fixed seeds, toy datasets, immediate browser checks, and
 exportable local run records.
 
@@ -11,8 +11,8 @@ exportable local run records.
 
 Open `/demo` after starting the app. The demo begins on a tensor-shape drill
 with seed 11. Its records use the separate `demo:seeded-ml-runs` local-storage
-key. **Reset demo** clears that key. **Start for real** discards demo records,
-then switches to the separate `real:seeded-ml-runs` key.
+key. **Reset demo** clears that key. **Open your real workbench** discards demo
+records, then switches to the separate `real:seeded-ml-runs` key.
 
 The browser check runs a supported expression against each drill’s immutable
 fixed exercise fixture and replays the drill's fixed trace. An answer must use
