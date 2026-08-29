@@ -1,0 +1,123 @@
+{
+  "axe": {
+    "desktop": {
+      "/": [],
+      "/demo": [],
+      "/lab": [],
+      "/privacy": [],
+      "/terms": [],
+      "/does-not-exist": []
+    },
+    "mobile": {
+      "/": [],
+      "/demo": [],
+      "/lab": [],
+      "/privacy": [],
+      "/terms": [],
+      "/does-not-exist": []
+    }
+  },
+  "responsive": {
+    "desktop": {
+      "/": {
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "h1": 1,
+        "main": 1
+      },
+      "/demo": {
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "h1": 1,
+        "main": 1
+      },
+      "/lab": {
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "h1": 1,
+        "main": 1
+      },
+      "/privacy": {
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "h1": 1,
+        "main": 1
+      },
+      "/terms": {
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "h1": 1,
+        "main": 1
+      },
+      "/does-not-exist": {
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "h1": 1,
+        "main": 1
+      }
+    },
+    "mobile": {
+      "/": {
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "h1": 1,
+        "main": 1
+      },
+      "/demo": {
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "h1": 1,
+        "main": 1
+      },
+      "/lab": {
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "h1": 1,
+        "main": 1
+      },
+      "/privacy": {
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "h1": 1,
+        "main": 1
+      },
+      "/terms": {
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "h1": 1,
+        "main": 1
+      },
+      "/does-not-exist": {
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "h1": 1,
+        "main": 1
+      }
+    }
+  },
+  "keyboard": {
+    "first": {
+      "text": "Skip to drills",
+      "outline": "rgb(20, 62, 153) solid 4px"
+    },
+    "routeH1Focused": true
+  },
+  "reducedMotion": {
+    "animation": "0s",
+    "transition": "0s"
+  },
+  "offline": {
+    "sw": {
+      "controlled": true,
+      "active": true,
+      "waiting": false,
+      "installing": false,
+      "caches": [
+        "seeded-ml-drills-v5"
+      ]
+    },
+    "status": 200,
+    "text": "Offline. Your saved lab and seeded drills are still available.",
+    "heading": "Run one seeded drill."
+  }
+}

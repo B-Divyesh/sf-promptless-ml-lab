@@ -1,0 +1,34 @@
+{
+  "status": 200,
+  "url": "https://promptless-ml-lab.sociobot.in/",
+  "title": "Seeded ML Drills — Practice reproducible models",
+  "h1": [
+    "Practice reproducible ML models."
+  ],
+  "text": "Skip to drills\nSEED\n\nML drills\nDemo\nDrills\nPrivacy\n\nFIXED SEEDS / NO CHAT REQUIRED\n\nPractice reproducible ML models.\n\nFor self-taught learners who need one small model task and a check now.\n\nTry it with sample data Opens a seeded drill and local run record.\n\nFree. All 30 drills are open.\nRuns stay in this browser.\nWorks offline after your first visit.\n\nTHE WORKBENCH\n\nChoose a short ML drill.\n\nEach drill checks its stated operation against fixed exercise data.\n\nOpen the 30 drills\nEstimated 6–10 minutes each\nHow the drills work\nPick a drill.\nStart with tensors, losses, or evaluation.\nWrite one line.\nUse the supplied tiny dataset and seed.\nSave the record.\nExport the run when the check passes.\nWhat this lab does not do.\n\nIt does not host models, rank people, or give generated solutions. Checks evaluate a supported answer line against fixed exercise data and replay a deterministic trace. It does not execute arbitrary Python or PyTorch.\n\nShort ML practice with fixed inputs.\n\nPrivacy · Terms · Built by Param Factory · v1.0.0 · build 31855d1489cb",
+  "requests": [
+    {
+      "url": "https://promptless-ml-lab.sociobot.in/",
+      "method": "GET",
+      "type": "document"
+    },
+    {
+      "url": "https://promptless-ml-lab.sociobot.in/assets/index-DfBgwhKV.js",
+      "method": "GET",
+      "type": "script"
+    },
+    {
+      "url": "https://promptless-ml-lab.sociobot.in/assets/index-CGY2ynO9.css",
+      "method": "GET",
+      "type": "stylesheet"
+    },
+    {
+      "url": "https://promptless-ml-lab.sociobot.in/assets/concrete-moss-lab.webp",
+      "method": "GET",
+      "type": "image"
+    }
+  ],
+  "browserErrors": [],
+  "consoleErrors": [],
+  "htmlLang": "en"
+}

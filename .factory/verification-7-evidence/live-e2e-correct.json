@@ -1,0 +1,72 @@
+{
+  "invalid": "Not yet. Use a valid answer line that produces (8, 3), then run checks again. (statement unsupported)",
+  "valid": "Passed. Saved a replayable record with seed 11.",
+  "export": {
+    "name": "seeded-ml-drills-demo-records.json",
+    "format": "seeded-ml-drills/run-records",
+    "version": 1,
+    "mode": "demo",
+    "runs": 2,
+    "run": {
+      "drillId": "tensor-shapes",
+      "seed": 11,
+      "pass": true,
+      "tracePoints": 7
+    }
+  },
+  "boundary": {
+    "message": "Code is too long to save. Keep the answer under 100,000 characters and try again.",
+    "enabled": true
+  },
+  "reset": {
+    "demo": null,
+    "real": "real-sentinel"
+  },
+  "real": {
+    "result": "Passed. Saved a replayable record with seed 11.",
+    "stores": {
+      "demo": null,
+      "real": "[{\"id\":\"954476c0-fa9a-43fc-96c6-ac7662d2804c\",\"drillId\":\"tensor-shapes\",\"at\":\"2026-08-29T07:19:00.009Z\",\"seed\":11,\"pass\":true,\"code\":\"# Seeded ML Drills — edit only the TODO line\\nimport torch\\nSEED = 11\\ntorch.manual_seed(SEED)\\n\\nx = torch.tensor([[0.1, 0.2, 0.3]] * 8)\\n# TODO: write one line below\\n\\nx.shape\",\"trace\":[0,0.275,0.453,0.607,0.747,0.877,1],\"version\":1}]"
+    }
+  },
+  "requests": [
+    {
+      "url": "https://promptless-ml-lab.sociobot.in/",
+      "method": "GET",
+      "type": "document"
+    },
+    {
+      "url": "https://promptless-ml-lab.sociobot.in/assets/index-DfBgwhKV.js",
+      "method": "GET",
+      "type": "script"
+    },
+    {
+      "url": "https://promptless-ml-lab.sociobot.in/assets/index-CGY2ynO9.css",
+      "method": "GET",
+      "type": "stylesheet"
+    },
+    {
+      "url": "https://promptless-ml-lab.sociobot.in/assets/concrete-moss-lab.webp",
+      "method": "GET",
+      "type": "image"
+    },
+    {
+      "url": "https://promptless-ml-lab.sociobot.in/assets/checker-worker-OxTQkAR8.js",
+      "method": "GET",
+      "type": "script"
+    },
+    {
+      "url": "https://promptless-ml-lab.sociobot.in/assets/checker-worker-OxTQkAR8.js",
+      "method": "GET",
+      "type": "script"
+    },
+    {
+      "url": "https://promptless-ml-lab.sociobot.in/assets/checker-worker-OxTQkAR8.js",
+      "method": "GET",
+      "type": "script"
+    }
+  ],
+  "allSameOrigin": true,
+  "allGet": true,
+  "errors": []
+}

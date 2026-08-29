@@ -1,0 +1,66 @@
+{
+  "paths": [
+    "/",
+    "/demo",
+    "/lab",
+    "/privacy",
+    "/terms",
+    "/does-not-exist"
+  ],
+  "links": [
+    {
+      "href": "https://promptless-ml-lab.sociobot.in/#main",
+      "status": 200
+    },
+    {
+      "href": "https://promptless-ml-lab.sociobot.in/",
+      "status": 200
+    },
+    {
+      "href": "https://promptless-ml-lab.sociobot.in/demo",
+      "status": 200
+    },
+    {
+      "href": "https://promptless-ml-lab.sociobot.in/#catalog",
+      "status": 200
+    },
+    {
+      "href": "https://promptless-ml-lab.sociobot.in/privacy",
+      "status": 200
+    },
+    {
+      "href": "https://promptless-ml-lab.sociobot.in/terms",
+      "status": 200
+    },
+    {
+      "href": "https://promptless-ml-lab.sociobot.in/demo#main",
+      "status": 200
+    },
+    {
+      "href": "https://promptless-ml-lab.sociobot.in/lab",
+      "status": 200
+    },
+    {
+      "href": "https://promptless-ml-lab.sociobot.in/lab#main",
+      "status": 200
+    },
+    {
+      "href": "https://promptless-ml-lab.sociobot.in/privacy#main",
+      "status": 200
+    },
+    {
+      "href": "https://promptless-ml-lab.sociobot.in/terms#main",
+      "status": 200
+    },
+    {
+      "href": "https://promptless-ml-lab.sociobot.in/does-not-exist#main",
+      "status": 404
+    }
+  ],
+  "bad": [
+    {
+      "href": "https://promptless-ml-lab.sociobot.in/does-not-exist#main",
+      "status": 404
+    }
+  ]
+}
