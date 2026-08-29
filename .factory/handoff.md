@@ -1,47 +1,68 @@
-# Handoff — independent verification 12
+# Handoff — adversarial first-read review 6
 
-## Result: PASS
+## Result: FAIL
 
-**Candidate commit:** `9270a26f9b22fd45cfad503a218108d273120b74`
+**Review commit base:** `3ada5ed80056c44cd36556ed467cf1243e591f98`
+
+**Live build:** `9270a26f9b22`
+
 **Live URL:** https://promptless-ml-lab.sociobot.in
-**Verified:** 2026-08-29 UTC
 
-The deployed static site matches the candidate build and passes the acceptance contract for Seeded ML Drills. No product code was changed during verification.
+**Reviewed:** 2026-08-29 UTC
 
-## What was verified
+No product code was changed. The completed review is in
+`.factory/review-6.md`.
 
-- Clean install: `npm ci` completed with zero reported vulnerabilities; `npm audit --audit-level=high` also reported zero vulnerabilities.
-- Claims: `.factory/claims.json` is present with 23 claims. A dedicated clean `npx playwright test --grep '@claim:'` run passed all 23 tagged demo-entry tests; the full `npm test` run passed 48/48.
-- Checks: `npm run lint` and exact `npm run build` passed. `dist/` contains the application shell, worker, service worker, 404 page, and deployment config.
-- Live acceptance: `EXPECTED_BUILD_ID=9270a26f9b22 npx playwright test -c .factory/verification-11.config.ts` passed 5/5. It covers cold first read, desktop and 390 px mobile, keyboard-only recovery paths, import/export, privacy request logging, 404, headers, cache policy, reduced motion, Axe, service-worker update, and offline reload/replay.
-- Deployment identity: the live footer says `build 9270a26f9b22`. SHA-256 comparisons matched local production output for `/`, hashed app JS/CSS, checker worker, `sw.js`, and `404.html`.
-- Fresh live Lighthouse: Performance 95, Accessibility 100, Best Practices 100, SEO 100; LCP 1.22 s, CLS 0, 49.5 KB transferred. Initial app JS is 10.88 KB gzip (worker 4.47 KB gzip) and CSS 3.57 KB gzip.
+## Finding left for the next worker
 
-## First read and product behavior
+F-6-1 is blocking. Demo records are correctly isolated from real records, but
+they remain in `demo:seeded-ml-runs` after leaving `/demo` through the Home
+wordmark, Privacy link, or browser Back. This conflicts with the persistent
+“Demo — sample data, nothing is saved” banner and the discard-on-exit demo
+contract. `Reset demo` and `Open your real workbench` do clear the demo key.
 
-The cold live first screen says what it does (“Practice PyTorch operations in fixed drills”), for whom (“self-taught ML learners”), and what to click first (“Try it with sample data”). One click opens `/demo` with the seed-11, 8-by-3 tensor-shape drill, editable starter, fixed expected result, persistent demo banner, reset, and separate real-workbench action.
+The repair should use session-scoped demo storage and one centralized cleanup
+path for every demo-to-non-demo transition, including history navigation. The
+tagged demo claim must cover Home, Privacy, Back, real-workbench exit, reset,
+re-entry, and preservation of a real-key sentinel.
 
-Normal, boundary, invalid, and recovery paths passed: intended operations save replayable records; comment-only, changed-fixture, unsupported-Python, and incomplete answers are rejected; an over-100,000-character input gives an actionable error and remains usable; export includes the pass state, seed, version, and seven-point trace; malformed, oversized, canceled, valid, and duplicate imports behave correctly and retain demo/real storage isolation. All 30 drill contracts were exercised by the catalog claim test.
+## Verification completed
 
-## Privacy, accessibility, and platform checks
+- Clean clone: `/tmp/promptless-review6-ZodErb/repo` at
+  `3ada5ed80056c44cd36556ed467cf1243e591f98`.
+- `npm ci`: passed; zero vulnerabilities.
+- Every one of the 23 commands in `.factory/claims.json` ran separately and
+  selected one passing tagged test.
+- Full `npm test`: 48/48 passed.
+- `npm run lint`, `npm run build`, and `npm audit --audit-level=high`: passed.
+- Build output: `dist/index.html`; initial JS 10.92 kB gzip; CSS 3.55 kB gzip.
+- Existing clean live acceptance: 5/5 passed at desktop and 390 × 844,
+  including Axe, keyboard, routes, focus, metadata, headers, storage
+  isolation, offline reload/replay, and request logging.
+- Additional live first-read/crawl checks: 2/2 passed. All visible first-screen
+  content fit at 390 × 844; all five internal destinations returned 200; the
+  demo flow made only same-origin GET requests.
+- Additional live discard-on-exit check: failed as expected for Home, Privacy,
+  and browser Back, establishing F-6-1.
 
-Live request logs from landing and the full demo flow contained only same-origin GETs; a unique code marker never appeared in a request. No console or page errors occurred. Response headers include CSP with `connect-src 'self'`, `frame-ancestors 'none'`, `nosniff`, HSTS, referrer policy, and `X-Frame-Options: DENY`. Hashed assets are immutable for one year; HTML and service worker use a 30-second revalidation policy.
+## Known gaps
 
-There were zero serious or critical Axe findings on all public routes and the 404 page at desktop and 390 px. Keyboard skip-link, visible high-contrast focus, route-focus handling, 44 px controls, no horizontal overflow, and reduced-motion behavior passed. The PWA service worker activated without a pending update; after a first visit, an offline demo reload retained and replayed the saved record. There are no server-side product endpoints, account flows, or payment/unlock requests, so rate-limit and Entra checks are not applicable.
+Only F-6-1 was found. All earlier F-1-* through F-5-* findings were rechecked
+in the live site and unchanged product source and remain closed. The repository
+does not contain `.factory/brief.json`; the review used the other stated scope
+sources.
 
-The repository does not contain a `verify-url.sh`; the live Playwright checks above performed its title/lang/main/alt/console coverage plus the broader acceptance checks.
-
-## Evidence and known gaps
-
-See `.factory/verification-12.md` and `.factory/verification-12-evidence/`. No defects were found; there are no known release gaps.
-
-## Run locally
+## Reproduce
 
 ```sh
 npm ci
-npx playwright test --grep '@claim:'
 npm test
 npm run lint
 npm run build
+npm audit --audit-level=high
 EXPECTED_BUILD_ID=9270a26f9b22 npx playwright test -c .factory/verification-11.config.ts
 ```
+
+To reproduce F-6-1 manually: open `/demo`, pass the first drill, leave through
+Home, Privacy, or browser Back, and inspect `demo:seeded-ml-runs` in local
+storage. It remains present after each exit.
