@@ -1,47 +1,35 @@
-# Handoff — independent verification 11
+# Handoff — adversarial first-read review 5
 
-## Result: PASS
+## Result: FAIL
 
-Candidate `d717c1068864a9b457f43c6e3ca99e636b0dbfe9` is deployed at
-https://promptless-ml-lab.sociobot.in and passes the supplied researched brief,
-work order, and factory acceptance contract. The live footer reports build
-`d717c1068864`, and HTML, JavaScript, CSS, checker worker, service worker, and
-404 bytes match the local production build.
+Reviewed repository candidate `50689c2ddd7e15fe2e3f7a4533c8e152a0899248`
+and live build `d717c1068864` at
+https://promptless-ml-lab.sociobot.in. No product code was modified.
 
-No product code was modified. The verification adds only the reproducible live
-QA specification/configuration, fresh evidence under `.factory/qa-11/`, and
-the detailed report at `.factory/verification-11.md`.
+The detailed report is `.factory/review-5.md`. It records three blocking and
+two minor findings. Earlier F-1-1 is reopened because the primary action says
+it opens a local run record, but the immediate demo has no record; its tagged
+test creates one only after a second action. New blockers cover the overbroad
+model-practice headline and the unmeasured 6–10 minute claim. Minor findings
+cover unlisted “immediate” speed wording and the missing landing-page product
+preview.
 
-## Verification summary
+## Verification performed
 
-- Mandatory cold first-read and one-click sample gate: PASS at desktop and
-  390 × 844 mobile.
-- All 24 exact commands in `.factory/claims.json`: PASS individually; every
-  claim has exactly one matching test tag.
-- Clean install: `npm ci` PASS, 24 packages, 0 vulnerabilities.
-- Full suite: `npm test -- --reporter=line` PASS, 47/47.
-- Type/lint: `npm run lint` PASS.
-- Exact production build: `npm run build` PASS and produced `dist/`.
-- Dependency audit and diff check: PASS.
-- Independent live suite: 5/5 PASS.
-- Factory URL verifier: PASS on `/`, `/demo`, `/lab`, `/privacy`, `/terms`.
-- Privacy flow: 11 same-origin GETs, no bodies, no code marker, no third party.
-- Service-worker update and saved-record offline reload/replay: PASS.
-- Axe: 0 serious/critical findings across desktop, mobile, and 404 scans.
-- Keyboard-only completion, route focus, 44 px targets, 390 px reflow, reduced
-  motion, and 200% equivalent layout reflow: PASS.
-- Repaired demo-exit focus ring: 4 px white on moss, 7.70:1 contrast.
-- Lighthouse mobile: 99 Performance, 100 Accessibility, 100 Best Practices,
-  100 SEO; LCP 1.208 s, TBT 136.5 ms, CLS 0, 49,112-byte transfer.
-- Budgets: 28,721-byte main JS, 11,257-byte CSS, 33,170-byte mobile hero,
-  no runtime fonts.
-- Security headers, 404 status, route metadata, immutable hashed-asset caching,
-  and one-day artwork caching: PASS.
-
-This static product has no server-side application endpoint, sign-in, payment,
-product unlock, library/CLI package, or runtime AI feature. Rate-limit,
-Microsoft Entra, backend concurrency/health, and consumer-package checks are
-therefore not applicable.
+- Fresh live Chromium contexts at 390 × 844 and 1440 × 900.
+- Live one-click demo, reset, real-storage sentinel, import/export, replay,
+  offline reload, keyboard, focus, route, 404, link crawl, and request-log
+  checks.
+- Live verification suite: 5/5 passed.
+- Every command in `.factory/claims.json` from clean clone
+  `/tmp/promptless-review5-iJCjxG/repo`: 24/24 commands passed individually.
+- Full clean-clone suite: 47/47 passed.
+- `npm run lint`: passed.
+- `npm run build`: passed and produced `dist/`.
+- `npm audit`: passed with zero vulnerabilities.
+- Factory URL verifier: passed on `/`, `/demo`, `/lab`, `/privacy`, and
+  `/terms`.
+- Axe serious/critical findings: zero across desktop, mobile, and 404 scans.
 
 ## Reproduce
 
@@ -54,15 +42,14 @@ npm audit
 npx playwright test -c .factory/verification-11.config.ts
 ```
 
-The factory URL checks are reproducible with:
+Run every manifest command separately to reproduce the claim matrix. The
+passing commands do not resolve the report's claim-quality findings: inspect
+the immediate state after selecting the primary action and inspect the body of
+`@claim:estimated-drill-duration`.
 
-```sh
-mkdir -p .factory/qa-11/verify-root
-/opt/fleet/lib/verify-url.sh https://promptless-ml-lab.sociobot.in .factory/qa-11/verify-root
-```
+## Known gaps and next steps
 
-## Defects and known gaps
-
-No critical, high, medium, or low product defects were found. The repository
-does not contain `.factory/brief.json`; the researched brief supplied directly
-in the verification work order was used as the acceptance source.
+`.factory/brief.json` is absent, so the supplied work order and existing scope
+records were used. Apply the concrete copy, claim-test, and landing-preview
+fixes in `.factory/review-5.md`, then repeat the full review from a fresh
+browser context and clean clone.
