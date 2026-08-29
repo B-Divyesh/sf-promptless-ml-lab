@@ -1,6 +1,6 @@
 export type Drill = {
   id: string; title: string; track: string; minutes: number; seed: number;
-  goal: string; dataset: string; task: string; expected: string; answers: string[];
+  goal: string; dataset: string; task: string; expected: string;
   starter: string; metric: string; start: number; end: number;
 };
 
@@ -37,6 +37,6 @@ export const drills: Drill[] = [
   ['pca-center','Center data before PCA','Classical ML',7,137,'Remove the mean before finding directions.','6 points × 2 features','Subtract the column mean.','column means = 0',['x - x.mean(dim=0)','x-x.mean(dim=0)'],starter('x = torch.tensor([[1.,2.],[2.,3.],[3.,4.],[4.,5.],[5.,6.],[6.,7.]])'),'mean',3.5,0],
   ['replay-seed','Replay a run from its seed','Reproducibility',6,149,'Prove a result can be made again.','Seeded XOR data','Set the documented seed.','same trace twice',['torch.manual_seed(SEED)','manual_seed(SEED)'],starter('SEED = 149'),'trace difference',1,0],
   ['save-config','Record training settings','Reproducibility',6,151,'Keep the settings needed to repeat a run.','Seed, learning rate, epochs','Create a config dictionary.','three saved fields',['{"seed": SEED','{"seed":SEED','dict(seed=SEED)'],starter('SEED = 151\nlr = 0.03\nepochs = 8'),'saved fields',0,3]
-].map(([id,title,track,minutes,seed,goal,dataset,task,expected,answers,starter,metric,start,end]) => ({ id,title,track,minutes,seed,goal,dataset,task,expected,answers,starter: (starter as string).replace('__SEED__', String(seed)),metric,start,end } as Drill));
+].map(([id,title,track,minutes,seed,goal,dataset,task,expected,_legacyExamples,starter,metric,start,end]) => ({ id,title,track,minutes,seed,goal,dataset,task,expected,starter: (starter as string).replace('__SEED__', String(seed)),metric,start,end } as Drill));
 
 export const tracks = [...new Set(drills.map((drill) => drill.track))];

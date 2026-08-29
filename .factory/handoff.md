@@ -1,67 +1,64 @@
-# Handoff — independent verification 3
+# Handoff — repair 3
 
-## Release result: FAIL
+## What changed
 
-Candidate `bda3a6771dee8719ecf10e698ba02e7426538d74` was independently tested on
-2026-08-29 against https://promptless-ml-lab.sociobot.in. The live deployment
-matches the candidate build byte-for-byte, so the previous deployment-only
-failure is resolved. No product code was changed during verification.
+- Replaced the answer-string whitelist with a closed browser-side expression
+  evaluator. It parses only the supported PyTorch-shaped expression subset,
+  builds each drill's fixed starter fixture independently, executes the submitted
+  expression against that fixture, and asserts the resulting value. It has no
+  `eval`, Python runtime, network access, or arbitrary browser API access.
+- Made the fixture prelude immutable: a changed 1×1 tensor is rejected even
+  when the final `x.shape` expression itself is valid. Bare function values,
+  incomplete statements, and unsupported code are rejected.
+- Replay now restores the saved source, reruns the check, and reports the
+  current result without creating a duplicate record. Leaving demo mode clears
+  the demo namespace before the real workbench opens.
+- Bumped the service-worker cache to `v3` and keeps navigation/cache replacement
+  promises alive with `waitUntil`, so the next offline reload gets the online
+  replacement.
+- Completed the public-route contract: `/lab` is in the sitemap, app footers
+  show a Vite-stamped build id, and the styled 404 now has metadata, standard
+  navigation/footer/skip link, and a 44 px recovery target.
 
-The release is blocked because the central checker matches the final source
-line to a whitelist instead of evaluating it against the drill fixture. A
-1×1 tensor was accepted and exported as passing for the 8×3 tensor-shape
-drill. Bare or incomplete answers such as `torch.randperm` are also accepted.
-This falsifies the `fixture-evaluator` claim and fails the brief's required
-hidden assertions and immediate correctness checks.
+## Verification evidence
 
-Additional defects: Replay does not restore or evaluate the saved source; a
-network-first service-worker reload does not replace a stale cached demo for
-the next offline load; **Start for real** retains demo records without an
-explicit keep choice; and the 404 omits the standard route skeleton/metadata
-and has a 20 px-high recovery target. Full evidence and severity details are
-in `.factory/verification-3.md` and `.factory/qa-evidence/`.
-
-## Verification performed
-
-From the clean candidate checkout:
+Run from a clean dependency install on 2026-08-29 UTC:
 
 ```sh
 npm ci
 npm run lint
-npm test
-npm run build
+npm test -- --reporter=line
 npm audit --omit=dev
+npm run build
 ```
 
-- All 10 exact claim commands passed after install; the declared fixture claim
-  was nevertheless falsified by an independent counterexample on local and
-  live builds.
-- Full suite: 25/25 passed. Build output: 21,476-byte main JS (8.66 KB gzip),
-  865-byte worker, 10,237-byte CSS (3.13 KB gzip), 157,900-byte hero.
-- Runtime audit: zero vulnerabilities. Full development audit: three high and
-  one low advisory in the Static Web Apps CLI tree.
-- Live SHA-256 hashes match local output for all deployed HTML, scripts,
-  styles, images, icons, robots, sitemap, service worker, and 404 assets.
-- `/opt/fleet/lib/verify-url.sh` passed `/`, `/demo`, and `/lab`; valid routes
-  logged no console/page errors.
-- Live axe: zero violations at desktop and 390 px across all public routes and
-  the 404. Keyboard, focus, reduced motion, mobile overflow, and application
-  touch targets passed. The 404 recovery link is only 20 px high.
-- Lighthouse mobile landing: 97 Performance, 100 Accessibility, 100 Best
-  Practices, 100 SEO; LCP 1.818 s, CLS 0. Demo: 95/100/100/100.
-- Full demo request logging showed only same-origin GETs. Security headers and
-  caching are deployed. Normal offline reload works; the stale-cache update
-  boundary fails.
-- This static app has no server API, unlock endpoint, authentication, or
-  payment. Rate-limit, backend concurrency, health identity, and Entra checks
-  are not applicable.
+- `npm run lint`: PASS.
+- Full Playwright suite: PASS, 26/26. It covers desktop and 390 px mobile,
+  keyboard/focus, axe serious/critical checks on every public route, privacy
+  request logging, offline reload, service-worker update replacement, replay,
+  demo isolation, 404 recovery target, and the constrained evaluator.
+- All 11 exact commands declared in `.factory/claims.json` were invoked from
+  the manifest and passed, including the new
+  `@claim:fixture-counterexamples` adversarial check.
+- `npm audit --omit=dev`: PASS, 0 runtime vulnerabilities. Full development
+  audit still reports the existing 3 high and 1 low advisory through the Static
+  Web Apps CLI tooling tree.
+- `npm run build`: PASS. Output is `dist/`; initial JavaScript is 22.05 KB
+  (8.84 KB gzip), checker worker 9.08 KB, CSS 10.24 KB (3.13 KB gzip), and the
+  hero remains 157.9 KB.
+- `/opt/fleet/lib/verify-url.sh` passed the Static Web Apps emulator at `/`,
+  `/demo`, and `/lab`: each had zero console/page errors, `lang=en`, one h1,
+  a main landmark, and no missing image alt text. JSON/screenshots are in
+  `.factory/qa-evidence/repair-local*`.
 
-## Next steps
+## Deployment
 
-Implement a real browser-side evaluator or constrained runtime that executes
-the supported expression against each fixed fixture and asserts the actual
-result. Add adversarial claim tests for wrong fixtures and incomplete answers.
-Make Replay restore and re-check the saved source, await the service-worker
-cache write, discard demo records on exit (or ask once before keeping them),
-and complete the 404/sitemap/build-id route contract. Then rerun all claim
-commands and this independent verification.
+The source repair is committed and will be pushed and deployed to the existing
+Azure Static Web Apps configuration (`promptless-ml-lab`, `dist/`). Live
+verification details are appended after deployment.
+
+## Known gaps
+
+- The app deliberately supports only its documented expression subset; it is
+  not a Python or PyTorch runtime. Production model code still belongs in a
+  real Python environment.

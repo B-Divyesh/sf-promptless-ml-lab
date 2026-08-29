@@ -3,7 +3,8 @@ import AxeBuilder from '@axe-core/playwright';
 
 async function passFirstDrill(page: import('@playwright/test').Page) {
   await page.goto('/demo');
-  await page.locator('#code').fill('import torch\nx = torch.zeros((8, 3))\nx.shape');
+  const starter = await page.locator('#code').inputValue();
+  await page.locator('#code').fill(`${starter}\nx.shape`);
   await page.getByRole('button', { name: 'Run hidden checks' }).click();
   await expect(page.getByText('Passed. Saved a replayable record with seed 11.')).toBeVisible();
 }
@@ -21,6 +22,8 @@ test('demo records can be passed and replayed', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Replayable run records' })).toBeVisible();
   await page.getByRole('button', { name: 'Replay', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Read tensor shapes' })).toBeVisible();
+  await expect(page.locator('#code')).toHaveValue(/x\.shape$/);
+  await expect(page.getByText('Replay checked the saved source: passed with seed 11.')).toBeVisible();
 });
 
 test('@claim:local-browser-runs demo sends no data away', async ({ page }) => {
@@ -82,10 +85,12 @@ test('@claim:estimated-drill-duration every listed drill has a 6–10 minute est
 
 test('@claim:real-workbench Start for real opens the isolated real workbench', async ({ page }) => {
   await page.goto('/demo');
+  await page.evaluate(() => localStorage.setItem('demo:seeded-ml-runs', 'demo-record'));
   await page.getByRole('link', { name: 'Start for real' }).click();
   await expect(page).toHaveURL(/\/lab$/);
   await expect(page.getByText('YOUR WORKBENCH')).toBeVisible();
-  await page.locator('#code').fill('import torch\nSEED = 11\ntorch.manual_seed(SEED)\nx = torch.zeros((8, 3))\nx.shape');
+  const starter = await page.locator('#code').inputValue();
+  await page.locator('#code').fill(`${starter}\nx.shape`);
   await page.getByRole('button', { name: 'Run hidden checks' }).click();
   await expect(page.getByText('Passed. Saved a replayable record with seed 11.')).toBeVisible();
   expect(await page.evaluate(() => localStorage.getItem('real:seeded-ml-runs'))).not.toBeNull();
@@ -156,21 +161,39 @@ test('@regression:sw-navigation a stale cached demo document is refreshed online
   await page.goto('/demo');
   await page.evaluate(async () => {
     await navigator.serviceWorker.ready;
-    const cache = await caches.open('seeded-ml-drills-v2');
+    const cache = await caches.open('seeded-ml-drills-v3');
     await cache.put('/demo', new Response('<title>stale demo</title><p>stale</p>', { headers: { 'content-type': 'text/html' } }));
   });
   await page.reload();
   await expect(page.getByRole('heading', { name: 'Run one seeded drill.' })).toBeVisible();
+  await page.context().setOffline(true);
+  await page.reload();
+  await expect(page.getByRole('heading', { name: 'Run one seeded drill.' })).toBeVisible();
+  await page.context().setOffline(false);
 });
 
 test('@claim:fixture-evaluator demo evaluates an executable answer line against fixed data', async ({ page }) => {
   await page.goto('/demo');
-  await page.locator('#code').fill('# x.shape\nthis is not valid Python');
+  const starter = await page.locator('#code').inputValue();
+  await page.locator('#code').fill(`${starter}\nthis is not valid Python`);
   await page.getByRole('button', { name: 'Run hidden checks' }).click();
   await expect(page.getByText(/Not yet\. Use a valid answer line/)).toBeVisible();
-  await page.locator('#code').fill('import torch\nSEED = 11\ntorch.manual_seed(SEED)\nx = torch.zeros((8, 3))\ntuple(x.size())');
+  await page.locator('#code').fill(`${starter}\ntuple(x.size())`);
   await page.getByRole('button', { name: 'Run hidden checks' }).click();
   await expect(page.getByText('Passed. Saved a replayable record with seed 11.')).toBeVisible();
+});
+
+test('@claim:fixture-counterexamples rejects wrong fixtures and incomplete expressions', async ({ page }) => {
+  await page.goto('/demo');
+  const starter = await page.locator('#code').inputValue();
+  await page.locator('#code').fill(`${starter.replace('[[0.1, 0.2, 0.3]] * 8', '[[0.1]]')}\nx.shape`);
+  await page.getByRole('button', { name: 'Run hidden checks' }).click();
+  await expect(page.getByText(/Not yet\. Use a valid answer line/)).toBeVisible();
+  await page.getByRole('button', { name: 'Shuffle with a seed' }).click();
+  const shuffleStarter = await page.locator('#code').inputValue();
+  await page.locator('#code').fill(`${shuffleStarter}\ntorch.randperm`);
+  await page.getByRole('button', { name: 'Run hidden checks' }).click();
+  await expect(page.getByText(/Not yet\. Use a valid answer line/)).toBeVisible();
 });
 
 test('@claim:deterministic-trace repeated checks export the same seven-point trace', async ({ page }) => {
@@ -214,6 +237,9 @@ test('@regression:real-404 unknown paths return the styled 404 document and stat
   await expect(page).toHaveTitle('Not found — Seeded ML Drills');
   await expect(page.getByRole('heading', { name: 'That drill does not exist.' })).toBeVisible();
   await expect(page.locator('link[href="/404.css"]')).toHaveCount(1);
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', /\/404$/);
+  const recovery = await page.getByRole('link', { name: 'Open the drill catalog' }).boundingBox();
+  expect(recovery?.height).toBeGreaterThanOrEqual(44);
 });
 
 test('@regression:touch-targets header and footer links are at least 44 pixels on desktop and mobile', async ({ page }) => {

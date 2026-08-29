@@ -11,11 +11,12 @@ exportable local run records.
 
 Open `/demo` after starting the app. The demo begins on a tensor-shape drill
 with seed 11. Its records use the separate `demo:seeded-ml-runs` local-storage
-key. **Reset demo** clears that key. Use **Start for real** to switch to the
-separate `real:seeded-ml-runs` key.
+key. **Reset demo** clears that key. **Start for real** discards demo records,
+then switches to the separate `real:seeded-ml-runs` key.
 
-The browser check evaluates a supported final answer line against each drill’s
-fixed exercise data and replays the drill's fixed trace. It is deliberately
+The browser check runs a supported expression against each drill’s immutable
+fixed exercise fixture and replays the drill's fixed trace. It rejects changed
+fixtures and incomplete expressions. It is deliberately
 transparent: it does not execute arbitrary Python or PyTorch. Use your own
 Python environment for production verification.
 

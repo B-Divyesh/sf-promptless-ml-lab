@@ -42,6 +42,13 @@
     "sandbox": "fresh demo; submit comment-only invalid source and observe Not yet; submit tuple(x.size()) against the fixed shape fixture and observe Passed"
   },
   {
+    "id": "fixture-counterexamples",
+    "claim": "The browser check rejects changed fixtures and incomplete expressions.",
+    "where": "workbench check result, README",
+    "test": "npm test -- --grep @claim:fixture-counterexamples",
+    "sandbox": "fresh demo; change the 8×3 fixture to 1×1 with x.shape, then submit bare torch.randperm; both must show Not yet"
+  },
+  {
     "id": "deterministic-trace",
     "claim": "The browser check replays a deterministic trace.",
     "where": "landing limitation, workbench help, README",
