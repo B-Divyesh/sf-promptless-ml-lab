@@ -53,5 +53,6 @@ not a fake UI. The production prompt is:
 > Use case: stylized-concept. Asset type: static-web hero illustration. Primary request: overhead editorial still life of a rough concrete laboratory workbench used for machine-learning practice; a square paper seed tag, small graphite plots, moss growing along a simple rising line, one dark pencil, tiny calibration weights. Scene/backdrop: pale limestone concrete. Style/medium: tactile editorial photography with restrained collage qualities. Composition/framing: wide landscape with quiet negative space on the left for web copy. Lighting/mood: soft overcast daylight, serious and calm. Color palette: limestone dust, charcoal ink, deep moss green, muted oxide red. Materials/textures: porous concrete, recycled paper, living moss, graphite. Constraints: no people, no screens, no logos, no words, no watermark, no brands.
 
 Generated with the factory image deployment on 2026-08-28. It is original
-product artwork. A WebP derivative is shipped below 300 KB; a PNG source and
-JSON prompt sidecar remain in `assets/src/`.
+product artwork. The 1280px WebP and a 640px mobile WebP derivative are
+shipped; the mobile hero is 33 KB. A PNG source and JSON prompt sidecar remain
+in `assets/src/`.

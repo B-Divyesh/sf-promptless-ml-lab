@@ -539,6 +539,8 @@ test('@regression:mobile-overflow every 390px route fits and keeps the primary a
     expect(await page.evaluate(() => document.documentElement.scrollWidth), path).toBeLessThanOrEqual(390);
   }
   await page.goto('/');
+  await expect(page.locator('.hero-art source[media="(max-width: 760px)"]')).toHaveAttribute('srcset', '/assets/concrete-moss-lab-640.webp');
+  expect(await page.locator('.hero-art img').evaluate((image: HTMLImageElement) => image.currentSrc.endsWith('/assets/concrete-moss-lab-640.webp'))).toBeTruthy();
   const primary = await page.getByRole('link', { name: 'Try it with sample data' }).boundingBox();
   expect(primary).not.toBeNull();
   expect(primary!.y + primary!.height).toBeLessThanOrEqual(844);
