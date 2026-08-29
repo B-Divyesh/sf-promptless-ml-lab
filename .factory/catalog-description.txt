@@ -1,1 +1,1 @@
-Practice PyTorch with 30 seeded drills and immediate browser checks.
+Practice PyTorch through 30 seeded drills with immediate browser checks.

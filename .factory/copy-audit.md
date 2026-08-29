@@ -1,4 +1,4 @@
-# Copy audit — polish round 3
+# Copy audit — polish round 4
 
 Counts treat hyphenated terms, paths, and version strings as one word. No
 visitor-facing unit exceeds 22 words or uses a banned marketing word.
@@ -83,7 +83,7 @@ are fully visible before scrolling.
 
 | Copy unit | Words | Characters | Flag |
 |---|---:|---:|---|
-| Practice PyTorch with 30 seeded drills and immediate browser checks. | 10 | 68 | — |
+| Practice PyTorch through 30 seeded drills with immediate browser checks. | 10 | 71 | — |
 
 It begins with a verb and stays below the 120-character limit.
 

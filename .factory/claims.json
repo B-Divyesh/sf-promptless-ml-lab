@@ -25,7 +25,7 @@
     "claim": "Imported records are saved only in the active workbench.",
     "where": "workbench import status, demo documentation, README",
     "test": "npm test -- --grep @claim:import-namespace",
-    "sandbox": "fresh demo with a real-workbench sentinel; import one record; assert only demo storage changes"
+    "sandbox": "fresh demo with a real-workbench sentinel, then a fresh real workbench with a demo sentinel; import one record in each mode and assert only that mode's storage changes"
   },
   {
     "id": "import-replay",
@@ -46,7 +46,7 @@
     "claim": "Try it with sample data opens a seeded drill and local run record.",
     "where": "landing primary action and note, README Try the sample",
     "test": "npm test -- --grep @claim:one-click-sample",
-    "sandbox": "fresh landing; click the primary action; assert /demo, persistent banner, tensor-shape fixture, demo-key write, and untouched real-key sentinel"
+    "sandbox": "fresh landing; click the primary action; assert /demo, persistent banner, tensor-shape fixture, demo-key write, and untouched real-key sentinel; then open /?demo=1 directly and assert the same banner, sample, reset, and isolation"
   },
   {
     "id": "no-third-party-runtime",
@@ -71,10 +71,10 @@
   },
   {
     "id": "offline-reload",
-    "claim": "Works offline after your first visit.",
+    "claim": "After your first visit, drills and saved run records are available offline.",
     "where": "landing facts, workbench status",
     "test": "npm test -- --grep @claim:offline-reload",
-    "sandbox": "fresh browser context; visit landing and demo; set offline; reload demo; assert workbench heading"
+    "sandbox": "fresh browser context; visit landing and demo; save a passing record; set offline; reload demo; assert the saved seed, record, and Replay remain available with no network egress"
   },
   {
     "id": "thirty-open-drills",
@@ -152,5 +152,19 @@
     "where": "landing limitations",
     "test": "npm test -- --grep @claim:scope-limits",
     "sandbox": "fresh demo; assert there are no hosting, upload, ranking, or solution-generation controls and a shortcut receives feedback without revealing an answer"
+  },
+  {
+    "id": "no-code-or-identity-upload",
+    "claim": "It does not send your code, run records, or identity to a server.",
+    "where": "Privacy, Terms",
+    "test": "npm test -- --grep @claim:no-code-or-identity-upload",
+    "sandbox": "fresh browser context; read Privacy and Terms; enter a unique code marker, check it, export and import records; inspect every request URL, method, header, and body for the marker or identity data; assert no account or identity control exists"
+  },
+  {
+    "id": "five-drill-practice-set",
+    "claim": "Complete five distinct drills for one practice set.",
+    "where": "demo and real workbench progress counter",
+    "test": "npm test -- --grep @claim:five-drill-practice-set",
+    "sandbox": "fresh demo with a real-workbench sentinel; complete five distinct drills, repeat one, reload, and reset; assert 0/5 through 5/5, deduplication, persistence, reset, and storage isolation"
   }
 ]
