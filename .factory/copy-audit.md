@@ -1,4 +1,4 @@
-# Copy audit — polish round 4
+# Copy audit — polish round 5
 
 Counts treat hyphenated terms, paths, and version strings as one word. No
 visitor-facing unit exceeds 22 words or uses a banned marketing word.
@@ -16,19 +16,31 @@ are fully visible before scrolling.
 | Drills | 1 | — |
 | Privacy | 1 | — |
 | FIXED SEEDS / NO CHAT REQUIRED | 6 | — |
-| Practice reproducible ML models. | 4 | — |
-| For self-taught learners who need one short ML drill and a check now. | 13 | — |
+| Practice PyTorch operations in fixed drills. | 6 | — |
+| For self-taught ML learners who want one short drill with a browser check. | 14 | — |
 | Try it with sample data | 5 | — |
-| Opens a seeded drill and local run record. | 8 | — |
+| Opens a tensor-shape drill with fixed sample inputs. | 8 | — |
 | Free. | 1 | — |
 | All 30 drills are open. | 5 | — |
 | Runs stay in this browser. | 5 | — |
 | Works offline after your first visit. | 6 | — |
 | A concrete workbench with moss growing along a plotted learning curve. | 11 | — |
+| Sample drill preview | 3 | — |
+| Read tensor shapes | 3 | — |
+| See the fixed inputs and expected result before opening the sample. | 11 | — |
+| Try this sample drill | 5 | — |
+| Seed | 1 | — |
+| Dataset | 1 | — |
+| 8 samples × 3 features | 5 | — |
+| Task | 1 | — |
+| Return the shape of x. | 6 | — |
+| Expected result | 2 | — |
+| (8, 3) | 1 | — |
+| Sample passed record | 3 | — |
+| Seven repeated results: 0.9 → 0.1 | 5 | — |
 | Choose a short ML drill. | 5 | — |
 | Each drill checks its stated operation against fixed drill data. | 10 | — |
 | Open the 30 drills | 4 | — |
-| Estimated 6–10 minutes each | 4 | — |
 | How the drills work | 4 | — |
 | Pick a drill. | 3 | — |
 | Start with tensors, losses, or evaluation. | 6 | — |
@@ -75,6 +87,9 @@ are fully visible before scrolling.
   “application shell” no longer name the selectable drill or explain its
   visitor-facing behavior.
 - “THE WORKBENCH” was removed from the landing page.
+- “Practice reproducible ML models,” “immediate,” and the 6–10 minute estimate
+  were removed. The first-screen wording now names fixed PyTorch operations,
+  and the adjacent action note describes only the state produced by one click.
 - The README uses sentences of 22 words or fewer.
 - `@regression:review-copy` rejects every retired phrase and
   `@regression:plain-words` checks visible sentence lengths and banned words.
@@ -83,7 +98,7 @@ are fully visible before scrolling.
 
 | Copy unit | Words | Characters | Flag |
 |---|---:|---:|---|
-| Practice PyTorch through 30 seeded drills with immediate browser checks. | 10 | 71 | — |
+| Practice PyTorch operations through 30 fixed drills with browser checks. | 10 | 70 | — |
 
 It begins with a verb and stays below the 120-character limit.
 

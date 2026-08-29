@@ -22,14 +22,14 @@ test('cold first read and one-click sample pass at desktop and mobile', async ({
   for (const viewport of [{ width: 1440, height: 900 }, { width: 390, height: 844 }]) {
     await page.setViewportSize(viewport);
     await page.goto('/', { waitUntil: 'networkidle' });
-    await expect(page.getByRole('heading', { level: 1, name: 'Practice reproducible ML models.' })).toBeVisible();
-    await expect(page.getByText('For self-taught learners who need one short ML drill and a check now.')).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1, name: 'Practice PyTorch operations in fixed drills.' })).toBeVisible();
+    await expect(page.getByText('For self-taught ML learners who want one short drill with a browser check.')).toBeVisible();
     const sample = page.getByRole('link', { name: 'Try it with sample data' });
     await expect(sample).toBeVisible();
-    await expect(page.getByText('Opens a seeded drill and local run record.')).toBeVisible();
+    await expect(page.getByText('Opens a tensor-shape drill with fixed sample inputs.')).toBeVisible();
     const firstScreen = [
       page.getByRole('heading', { level: 1 }),
-      page.getByText('For self-taught learners who need one short ML drill and a check now.'),
+      page.getByText('For self-taught ML learners who want one short drill with a browser check.'),
       sample
     ];
     for (const item of firstScreen) {
@@ -155,7 +155,7 @@ test('import rejects malformed, oversized and duplicate records with recovery an
 
 test('routes pass semantics, axe, reflow, touch, metadata, focus and reduced motion', async ({ page }) => {
   const routes = [
-    ['/', 'Seeded ML Drills — Practice reproducible models', '/'],
+    ['/', 'Seeded ML Drills — Practice PyTorch operations', '/'],
     ['/demo', 'Demo — Seeded ML Drills', '/demo'],
     ['/lab', 'Workbench — Seeded ML Drills', '/lab'],
     ['/privacy', 'Privacy — Seeded ML Drills', '/privacy'],
@@ -216,7 +216,7 @@ test('routes pass semantics, axe, reflow, touch, metadata, focus and reduced mot
   await page.getByRole('link', { name: 'Privacy', exact: true }).first().click();
   await expect(page.getByRole('heading', { level: 1 })).toBeFocused();
   await page.goBack();
-  await expect(page.getByRole('heading', { name: 'Practice reproducible ML models.' })).toBeFocused();
+  await expect(page.getByRole('heading', { name: 'Practice PyTorch operations in fixed drills.' })).toBeFocused();
   const missing = await page.goto('/verification-11-not-found');
   expect(missing?.status()).toBe(404);
   await expect(page).toHaveTitle('Not found — Seeded ML Drills');

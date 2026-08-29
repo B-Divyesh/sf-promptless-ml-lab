@@ -58,13 +58,18 @@ test('@regression:review-copy required copy and catalog wording stay plain', () 
   const readme = readFileSync('README.md', 'utf8');
   const source = readFileSync('src/main.ts', 'utf8');
   const catalogDescription = readFileSync('.factory/catalog-description.txt', 'utf8').trim();
-  expect(readme).toContain('Seeded ML Drills gives self-taught ML learners one short PyTorch drill with an\nimmediate check.');
+  expect(readme).toContain('Practice PyTorch operations in fixed drills.');
+  expect(readme).toContain('Seeded ML Drills gives self-taught ML learners one short PyTorch drill with a\nbrowser check.');
   expect(readme).toContain('You do not need to choose a project or ask a chatbot.');
+  expect(readme).toContain('The demo opens a tensor-shape drill with\nfixed sample inputs and seed 11.');
+  expect(source).toContain('Practice PyTorch operations in fixed drills.');
+  expect(source).toContain('For self-taught ML learners who want one short drill with a browser check.');
+  expect(source).toContain('Opens a tensor-shape drill with fixed sample inputs.');
   expect(source).toContain('Choose a short ML drill.');
   expect(source).toContain('How the drills work');
   expect(source).toContain('Check my answer');
   expect(source).toContain('Open your real workbench');
-  expect(`${readme}\n${source}`).not.toMatch(/concept-sized|Build the habit|One small trace|Hero art is generated original artwork|Run hidden checks|Start for real|THE WORKBENCH|supported expression|application shell|fixed exercise/i);
+  expect(`${readme}\n${source}`).not.toMatch(/concept-sized|Build the habit|One small trace|Hero art is generated original artwork|Run hidden checks|Start for real|THE WORKBENCH|supported expression|application shell|fixed exercise|reproducible ML models|immediate|6–10 minutes/i);
   expect(source).toContain('The checker accepts the PyTorch operation named in each drill.');
   expect(source).toContain('It reruns the same seven results from the same inputs.');
   expect(catalogDescription.length).toBeLessThanOrEqual(120);
@@ -157,7 +162,7 @@ test('@claim:demo-reset reset only clears demo records', async ({ page }) => {
   expect(await page.evaluate(() => localStorage.getItem('real:seeded-ml-runs'))).toBe('real-sentinel');
 });
 
-test('@claim:one-click-sample landing opens a populated isolated demo', async ({ page }) => {
+test('@claim:one-click-sample landing opens a populated isolated demo before any answer is checked', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');
   await page.evaluate(() => localStorage.setItem('real:seeded-ml-runs', 'real-sentinel'));
@@ -174,18 +179,41 @@ test('@claim:one-click-sample landing opens a populated isolated demo', async ({
     expect(box).not.toBeNull();
     expect(box!.y + Math.min(box!.height, 1), 'sample content should intersect the first mobile viewport').toBeLessThanOrEqual(844);
   }
+  expect(await page.evaluate(() => localStorage.getItem('demo:seeded-ml-runs'))).toBeNull();
+  expect(await page.evaluate(() => localStorage.getItem('real:seeded-ml-runs'))).toBe('real-sentinel');
+
+  await page.goto('/?demo=1');
+  await expect(page.getByLabel('Demo mode')).toContainText('Demo — sample data, nothing is saved.');
+  await expect(page.getByRole('heading', { name: 'Read tensor shapes' })).toBeVisible();
+  await expect(page.locator('#code')).toBeEditable();
+  expect(await page.evaluate(() => localStorage.getItem('demo:seeded-ml-runs'))).toBeNull();
+  expect(await page.evaluate(() => localStorage.getItem('real:seeded-ml-runs'))).toBe('real-sentinel');
+  await page.getByRole('button', { name: 'Reset demo' }).click();
+  expect(await page.evaluate(() => localStorage.getItem('demo:seeded-ml-runs'))).toBeNull();
+  expect(await page.evaluate(() => localStorage.getItem('real:seeded-ml-runs'))).toBe('real-sentinel');
+});
+
+test('@regression:landing-preview shows a read-only sample drill before the catalog', async ({ page }) => {
+  await page.goto('/');
+  const preview = page.locator('.drill-preview');
+  await expect(preview.getByRole('heading', { name: 'Read tensor shapes' })).toBeVisible();
+  await expect(preview.getByText('8 samples × 3 features')).toBeVisible();
+  await expect(preview.getByText('Return the shape of x.')).toBeVisible();
+  await expect(preview.getByText('(8, 3)', { exact: true })).toBeVisible();
+  await expect(preview.getByRole('heading', { name: 'Sample passed record' })).toBeVisible();
+  await preview.getByRole('link', { name: 'Try this sample drill' }).click();
+  await expect(page).toHaveURL(/\/demo$/);
+  await expect(page.getByRole('heading', { name: 'Read tensor shapes' })).toBeVisible();
+});
+
+test('@regression:one-click-check then saves only a demo run record', async ({ page }) => {
+  await page.goto('/demo');
+  await page.evaluate(() => localStorage.setItem('real:seeded-ml-runs', 'real-sentinel'));
   const starter = await page.locator('#code').inputValue();
   await page.locator('#code').fill(`${starter}\nx.shape`);
   await page.getByRole('button', { name: 'Check my answer' }).click();
   await expect(page.getByText('Passed. Saved a replayable record with seed 11.')).toBeVisible();
   expect(await page.evaluate(() => localStorage.getItem('demo:seeded-ml-runs'))).not.toBeNull();
-  expect(await page.evaluate(() => localStorage.getItem('real:seeded-ml-runs'))).toBe('real-sentinel');
-  await page.goto('/?demo=1');
-  await expect(page.getByLabel('Demo mode')).toContainText('Demo — sample data, nothing is saved.');
-  await expect(page.getByRole('heading', { name: 'Read tensor shapes' })).toBeVisible();
-  await expect(page.locator('#code')).toBeEditable();
-  await page.getByRole('button', { name: 'Reset demo' }).click();
-  expect(await page.evaluate(() => localStorage.getItem('demo:seeded-ml-runs'))).toBeNull();
   expect(await page.evaluate(() => localStorage.getItem('real:seeded-ml-runs'))).toBe('real-sentinel');
 });
 
@@ -349,13 +377,6 @@ test('@claim:scope-limits the lab has no hosting, ranking, or generated-solution
   await page.getByRole('button', { name: 'Check my answer' }).click();
   await expect(page.locator('#result')).toContainText('Not yet.');
   await expect(page.locator('#result')).not.toContainText(/solution is|try x\.shape/i);
-});
-
-test('@claim:estimated-drill-duration every listed drill has a 6–10 minute estimate', async ({ page }) => {
-  await page.goto('/demo');
-  const minutes = await page.locator('[data-drill] small').evaluateAll((labels) => labels.map((label) => Number(label.textContent?.match(/(\d+) min/)?.[1])));
-  expect(minutes).toHaveLength(30);
-  expect(minutes.every((minute) => minute >= 6 && minute <= 10)).toBeTruthy();
 });
 
 test('@claim:real-workbench Open your real workbench opens the isolated real workbench', async ({ page }) => {
@@ -548,7 +569,7 @@ test('@regression:navigation Drills points to the landing catalog and framing is
 
 test('@regression:metadata route canonicals and mutable artwork cache correctly', async ({ page }) => {
   const routes = [
-    ['/', 'Seeded ML Drills — Practice reproducible models', '/'],
+    ['/', 'Seeded ML Drills — Practice PyTorch operations', '/'],
     ['/demo', 'Demo — Seeded ML Drills', '/demo'],
     ['/?demo=1', 'Demo — Seeded ML Drills', '/demo'],
     ['/lab', 'Workbench — Seeded ML Drills', '/lab'],
@@ -611,7 +632,7 @@ test('@regression:route-focus navigation and browser history focus and announce 
   await expect(page.getByRole('heading', { name: 'Your practice stays in this browser.' })).toBeFocused();
   await expect(page.locator('[role="status"][aria-live="polite"]').first()).toContainText('Privacy — Seeded ML Drills');
   await page.goBack();
-  await expect(page.getByRole('heading', { name: 'Practice reproducible ML models.' })).toBeFocused();
+  await expect(page.getByRole('heading', { name: 'Practice PyTorch operations in fixed drills.' })).toBeFocused();
   await expect(page).toHaveURL(/\/$/);
 });
 

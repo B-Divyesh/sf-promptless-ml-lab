@@ -1,7 +1,8 @@
 # Demo sandbox
 
-Open `/demo` (or `/?demo=1`) for the one-click sample. It starts with the
-first of 30 fixed drills: tensor shapes, seed 11, and an 8 × 3 toy tensor.
+Open `/demo` (or `/?demo=1`) for the one-click sample. It opens the first of
+30 fixed drills: tensor shapes, seed 11, and an 8 × 3 toy tensor. The demo
+does not create a run record until a visitor chooses **Check my answer**.
 
 The browser checker checks the named PyTorch operation and its result against
 each drill's fixed inputs. The tests submit one intended answer and one

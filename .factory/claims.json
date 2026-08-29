@@ -43,10 +43,10 @@
   },
   {
     "id": "one-click-sample",
-    "claim": "Try it with sample data opens a seeded drill and local run record.",
+    "claim": "Try it with sample data opens a tensor-shape drill with fixed sample inputs.",
     "where": "landing primary action and note, README Try the sample",
     "test": "npm test -- --grep @claim:one-click-sample",
-    "sandbox": "fresh landing; click the primary action; assert /demo, persistent banner, tensor-shape fixture, demo-key write, and untouched real-key sentinel; then open /?demo=1 directly and assert the same banner, sample, reset, and isolation"
+    "sandbox": "fresh landing with a real-workbench sentinel; click the primary action and, before an answer check, assert /demo, the persistent banner and Reset demo control, tensor-shape fixed inputs, an editable starter, no demo run record, and an untouched real sentinel; then open /?demo=1 directly and assert the same sample, reset behavior, and isolation"
   },
   {
     "id": "no-third-party-runtime",
@@ -117,13 +117,6 @@
     "where": "landing limitation, terms, README",
     "test": "npm test -- --grep @claim:no-arbitrary-pytorch",
     "sandbox": "fresh demo; submit a Python raise statement plus the required operation; assert it is rejected and the browser raises no execution error"
-  },
-  {
-    "id": "estimated-drill-duration",
-    "claim": "Each drill has a 6–10 minute estimate.",
-    "where": "landing catalog callout, drill catalog",
-    "test": "npm test -- --grep @claim:estimated-drill-duration",
-    "sandbox": "fresh demo; assert all 30 displayed drill estimates are between 6 and 10 minutes"
   },
   {
     "id": "real-workbench",
