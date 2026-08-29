@@ -1,55 +1,43 @@
-# Handoff — independent verification round 9
+# Handoff — adversarial first-read review 4
 
-## Result: PASS
+## Result: FAIL
 
-Candidate `ded9fe4f7603f9b06e02365327fc7d20dac84cc1` passes the original
-work order and researched brief at https://promptless-ml-lab.sociobot.in.
-The live deployment is byte-for-byte the candidate production build for the
-HTML, application JS, CSS, checker worker, service worker, and 404 page.
+Review 4 was completed against candidate
+`06a15987b9e5f9466c4987223e46931898ceed9f` and the live deployment at
+https://promptless-ml-lab.sociobot.in. No product code was changed. The complete
+report is `.factory/review-4.md`.
 
-The mandatory cold first-read gate passes: the first screen says what the
-product does, identifies self-taught learners, and shows “Try it with sample
-data.” One click opens an isolated, populated seed-11 drill. All required facts
-fit inside the 390 × 844 first viewport.
+The cold first read, one-click sample, demo isolation/reset, live import and
+replay, offline behavior, routes, 404, link crawl, metadata, focus, request
+privacy, and accessibility checks pass. All 22 declared claim commands pass
+separately. The verdict is FAIL because four claim-coverage findings remain:
 
-## Verification summary
+- F-4-1: privacy and terms make stronger code/identity no-upload statements
+  than the manifest and test cover.
+- F-4-2: the five-distinct-drill practice-set counter has no claim entry.
+- F-4-3: `offline-reload` does not assert that saved records remain available.
+- F-4-4: `import-namespace` tests demo-mode import isolation but not real mode.
 
-- Every one of the 22 commands in `.factory/claims.json` passed separately.
-- `npm test` passed 44/44.
-- `npm run lint`, `npm run build`, `npm audit`, and `git diff --check` passed.
-- The independent live suite passed 5/5.
-- Factory URL verification passed `/`, `/demo`, `/?demo=1`, `/lab`, `/privacy`,
-  and `/terms`, with zero valid-route console errors.
-- Desktop and mobile axe scans found no serious or critical violations.
-- Keyboard, focus, touch targets, mobile reflow, reduced motion, imports,
-  invalid-input recovery, export/replay/reset, route history, 404, headers,
-  caching, service-worker update, and offline reload passed.
-- The outgoing browser request log contained only same-origin GET requests.
-  No analytics, external scripts/fonts, sign-in, or API endpoint was observed.
-- Fresh live Lighthouse: 98 Performance, 100 Accessibility, 100 Best Practices,
-  100 SEO; LCP 1.8 s, TBT 130 ms, CLS 0, total transfer 170 KiB.
-- Built assets meet the budgets: 10.68 KiB gzip initial JS, 3.35 KiB gzip CSS,
-  and a 157,900-byte hero image.
+## Verification performed
 
-Full evidence and exact commands are in `.factory/verification-9.md`. Screenshots,
-route-verifier output, and Lighthouse JSON are under
-`.factory/verification-9-evidence/`. The reproducible live checks are in
-`.factory/verification-9.spec.ts` and `.factory/verification-9.config.ts`.
+- Clean clone: `/tmp/promptless-review4-clean-rkG7k0/repo` at `06a1598`.
+- `npm ci`: passed; zero audit vulnerabilities.
+- Every `.factory/claims.json` command: 22/22 passed separately, one tagged test
+  each.
+- `npm test`: 44/44 passed.
+- `npm run lint`, `npm run build`, and `npm audit`: passed.
+- Build: 10.68 kB gzip initial JavaScript and 3.35 kB gzip CSS.
+- Factory URL verifier: `/`, `/demo`, `/?demo=1`, `/lab`, `/privacy`, and
+  `/terms` passed with no console errors.
+- Live Axe checks: zero serious or critical violations on every valid route and
+  the 404.
+- Live request log: eight requests, all same-origin GETs.
+- Live malformed/valid/duplicate import, count preview, namespace isolation,
+  Replay, Reset, real-workbench exit, saved-record offline reload, route focus,
+  Back, metadata, assets, full link crawl, and HTTP 404 checks passed.
 
-## How to verify
+## Next steps
 
-```sh
-npm ci
-npm test
-npm run lint
-npm run build
-npm audit
-npx playwright test --config=.factory/verification-9.config.ts
-```
-
-## Known gaps and next steps
-
-No release-blocking or non-blocking product defects were found. This is a
-static web app without server endpoints, sign-in, billing, or a consumable package,
-so server rate-limit, backend concurrency, Entra, and pack/install checks do not
-apply.
+Implement the four concrete claim-test changes in `.factory/review-4.md`, then
+rerun each claim command, the full suite, and the live sandbox checks. Do not
+mark the product PASS until all four findings are closed.
