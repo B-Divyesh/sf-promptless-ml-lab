@@ -3,6 +3,42 @@ import AxeBuilder from '@axe-core/playwright';
 import { drills } from '../src/drills';
 import { drillContracts } from '../src/drill-contracts';
 
+// This visitor-facing specification is deliberately independent from
+// src/drill-contracts.ts. If product copy and evaluator contracts drift, the
+// claim test must fail instead of approving the contract with its own data.
+const intendedDrills = [
+  { id: 'tensor-shapes', task: 'Return the shape of x.', answer: 'x.shape', shortcut: '[8, 3]' },
+  { id: 'broadcast-bias', task: 'Add bias to x without a loop.', answer: 'x + bias', shortcut: 'torch.tensor([[1.25, -0.5]] * 4)' },
+  { id: 'seeded-shuffle', task: 'Create a seeded permutation.', answer: 'torch.randperm(12)', shortcut: 'rows' },
+  { id: 'split-indices', task: 'Select the first 16 shuffled rows for training.', answer: 'perm[:16]', shortcut: 'perm' },
+  { id: 'standardize', task: 'Compute z scores from x.', answer: '(x - x.mean()) / x.std()', shortcut: 'x' },
+  { id: 'one-hot', task: 'One-hot encode y with 3 classes.', answer: 'torch.nn.functional.one_hot(y, num_classes=3)', shortcut: 'y' },
+  { id: 'linear-forward', task: 'Compute x @ w + b.', answer: 'x @ w + b', shortcut: 'x @ w' },
+  { id: 'mse-loss', task: 'Compute mean squared error.', answer: '((pred - y) ** 2).mean()', shortcut: '0.025' },
+  { id: 'gradient-step', task: 'Subtract lr times w.grad.', answer: 'w -= lr * w.grad', shortcut: 'w -= lr * 0.6' },
+  { id: 'logit', task: 'Compute x @ w + b.', answer: 'x @ w + b', shortcut: 'x @ w' },
+  { id: 'sigmoid', task: 'Apply sigmoid to logits.', answer: 'torch.sigmoid(logits)', shortcut: 'logits' },
+  { id: 'threshold', task: 'Predict 1 where p is at least 0.5.', answer: 'p >= 0.5', shortcut: 'p' },
+  { id: 'bce', task: 'Use binary_cross_entropy_with_logits.', answer: 'torch.nn.functional.binary_cross_entropy_with_logits(logits, y)', shortcut: 'logits.mean()' },
+  { id: 'accuracy', task: 'Take the mean of pred == y.', answer: '(pred == y).float().mean()', shortcut: '0.8' },
+  { id: 'relu', task: 'Apply relu to z.', answer: 'torch.relu(z)', shortcut: 'z' },
+  { id: 'two-layer', task: 'Apply ReLU between both layers.', answer: 'torch.relu(x @ w1) @ w2', shortcut: '(x @ w1) @ w2' },
+  { id: 'dropout-mode', task: 'Set the model to evaluation mode.', answer: 'model.eval()', shortcut: 'model' },
+  { id: 'batch-loss', task: 'Take the mean loss.', answer: 'losses.mean()', shortcut: '0.375' },
+  { id: 'zero-grad', task: 'Clear gradients before backward.', answer: 'optimizer.zero_grad()', shortcut: 'optimizer' },
+  { id: 'epoch-loop', task: 'Multiply three epochs by the batch count.', answer: '3 * len(batches)', shortcut: '9' },
+  { id: 'early-stop', task: 'Check whether val_loss is lower than best.', answer: 'val_loss < best', shortcut: 'val_loss' },
+  { id: 'confusion', task: 'Count predicted 1 when y is 0.', answer: '((pred == 1) & (y == 0)).sum()', shortcut: '2' },
+  { id: 'precision', task: 'Compute TP / (TP + FP).', answer: 'tp / (tp + fp)', shortcut: '0.8' },
+  { id: 'recall', task: 'Compute TP / (TP + FN).', answer: 'tp / (tp + fn)', shortcut: '0.6666666667' },
+  { id: 'overfit-gap', task: 'Subtract train loss from validation loss.', answer: 'val_loss - train_loss', shortcut: 'train_loss - val_loss' },
+  { id: 'knn-distance', task: 'Sum squared coordinate differences.', answer: '((x - q) ** 2).sum(dim=1).argmin()', shortcut: '2' },
+  { id: 'kmeans-centroid', task: 'Take the mean over points.', answer: 'points.mean(dim=0)', shortcut: '[2.5, 2.5]' },
+  { id: 'pca-center', task: 'Subtract the column mean.', answer: 'x - x.mean(dim=0)', shortcut: 'x - torch.tensor([3.5, 4.5])' },
+  { id: 'replay-seed', task: 'Set the documented seed.', answer: 'torch.manual_seed(SEED)', shortcut: 'torch.rand(4)' },
+  { id: 'save-config', task: 'Create a config dictionary.', answer: '{"seed": SEED, "lr": lr, "epochs": epochs}', shortcut: '{"seed": 0, "lr": 0, "epochs": 0}' }
+] as const;
+
 async function passFirstDrill(page: import('@playwright/test').Page) {
   await page.goto('/demo');
   const starter = await page.locator('#code').inputValue();
@@ -81,20 +117,39 @@ test('@claim:thirty-open-drills demo exposes all 30 drills', async ({ page }) =>
 test('@claim:catalog-evaluator every drill accepts its intended operation and rejects an unrelated shortcut', async ({ page }) => {
   test.setTimeout(120_000);
   expect(drills).toHaveLength(30);
-  expect(Object.keys(drillContracts).sort()).toEqual(drills.map(({ id }) => id).sort());
+  expect(intendedDrills).toHaveLength(30);
+  expect(intendedDrills.map(({ id }) => id)).toEqual(drills.map(({ id }) => id));
   await page.goto('/demo');
 
-  for (const drill of drills) {
-    const contract = drillContracts[drill.id];
-    await page.locator(`[data-drill="${drill.id}"]`).click();
-    await page.locator('#code').fill(`${drill.starter}\n${contract.answers[0]}`);
+  for (const intended of intendedDrills) {
+    const drill = drills.find(({ id }) => id === intended.id)!;
+    await page.locator(`[data-drill="${intended.id}"]`).click();
+    await expect(page.locator('.instruction-grid section').nth(1).locator('p'), `${intended.id} should state its tested operation`).toHaveText(intended.task);
+    await page.locator('#code').fill(`${drill.starter}\n${intended.answer}`);
     await page.getByRole('button', { name: 'Run hidden checks' }).click();
-    await expect(page.locator('#result'), `${drill.id} should accept ${contract.answers[0]}`).toContainText('Passed.');
+    await expect(page.locator('#result'), `${intended.id} should accept ${intended.answer}`).toContainText('Passed.');
 
-    await page.locator('#code').fill(`${drill.starter}\n${contract.shortcut}`);
+    await page.locator('#code').fill(`${drill.starter}\n${intended.shortcut}`);
     await page.getByRole('button', { name: 'Run hidden checks' }).click();
-    await expect(page.locator('#result'), `${drill.id} should reject ${contract.shortcut}`).toContainText('Not yet.');
+    await expect(page.locator('#result'), `${intended.id} should reject ${intended.shortcut}`).toContainText('Not yet.');
   }
+});
+
+test('@regression:overfit-gap drill 25 states and accepts validation minus train', async ({ page }) => {
+  await page.goto('/demo');
+  await page.locator('[data-drill="overfit-gap"]').click();
+  await expect(page.locator('.instruction-grid section').nth(0).locator('p')).toHaveText('Two fixed loss values');
+  await expect(page.locator('.instruction-grid section').nth(1).locator('p')).toHaveText('Subtract train loss from validation loss.');
+  await expect(page.locator('.instruction-grid section').nth(2).locator('p')).toHaveText('gap = 0.31');
+  const starter = await page.locator('#code').inputValue();
+
+  await page.locator('#code').fill(`${starter}\nval_loss - train_loss`);
+  await page.getByRole('button', { name: 'Run hidden checks' }).click();
+  await expect(page.locator('#result')).toContainText('Passed.');
+
+  await page.locator('#code').fill(`${starter}\ntrain_loss - val_loss`);
+  await page.getByRole('button', { name: 'Run hidden checks' }).click();
+  await expect(page.locator('#result')).toContainText('Not yet.');
 });
 
 test('@regression:standardize-dimension zero-argument tensor reductions do not receive a phantom dimension', async ({ page }) => {
@@ -233,7 +288,7 @@ test('@regression:sw-navigation a stale cached demo document is refreshed online
   await page.goto('/demo');
   await page.evaluate(async () => {
     await navigator.serviceWorker.ready;
-    const cache = await caches.open('seeded-ml-drills-v4');
+    const cache = await caches.open('seeded-ml-drills-v5');
     await cache.put('/demo', new Response('<title>stale demo</title><p>stale</p>', { headers: { 'content-type': 'text/html' } }));
   });
   await page.reload();

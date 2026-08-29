@@ -39,7 +39,7 @@
     "claim": "Each of the 30 drills checks its stated operation against fixed exercise data.",
     "where": "landing catalog, workbench, README",
     "test": "npm test -- --grep @claim:catalog-evaluator",
-    "sandbox": "fresh demo; for all 30 drills submit the catalog's intended operation and assert pass, then submit its unrelated shortcut and assert rejection"
+    "sandbox": "fresh demo; compare every visible task with an independently declared specification, submit that specification's intended operation and assert pass, then submit its independently declared shortcut and assert rejection"
   },
   {
     "id": "fixture-evaluator",
