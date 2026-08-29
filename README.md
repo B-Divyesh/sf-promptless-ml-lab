@@ -30,7 +30,7 @@ imported record can be replayed against its drill's fixed inputs.
 ## Develop
 
 ```sh
-npm install
+npm ci
 npm run dev
 ```
 
