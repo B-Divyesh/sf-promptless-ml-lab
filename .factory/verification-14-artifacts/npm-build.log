@@ -1,0 +1,14 @@
+
+> promptless-ml-lab@1.0.0 build
+> tsc --noEmit && vite build
+
+vite v6.4.3 building for production...
+transforming...
+✓ 6 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                          1.55 kB │ gzip:  0.53 kB
+dist/assets/checker-worker-OxTQkAR8.js  11.76 kB
+dist/assets/index-DHMkLhsd.css          12.40 kB │ gzip:  3.55 kB
+dist/assets/index-Dk-Nuq9w.js           29.61 kB │ gzip: 11.00 kB
+✓ built in 642ms

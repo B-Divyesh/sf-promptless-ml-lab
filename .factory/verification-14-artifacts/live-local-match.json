@@ -1,0 +1,11 @@
+{
+  "matched": [
+    "index.html",
+    "assets/index-Dk-Nuq9w.js",
+    "assets/index-DHMkLhsd.css",
+    "assets/checker-worker-OxTQkAR8.js",
+    "sw.js"
+  ],
+  "mismatches": [],
+  "platformOnly": "staticwebapp.config.json returns 404 as deployment configuration is not served"
+}

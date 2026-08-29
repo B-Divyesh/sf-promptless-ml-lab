@@ -1,78 +1,25 @@
-# Handoff — repair 7
+# Handoff — independent verification 14
 
 ## Result: PASS
 
-**Verifier report repaired:** `037c86f8e4f537e513d7eb1c0b875ddd32810161` (F-13-1)
-**Failed candidate:** `7202a87b5c22e6159064436a005734223ce86353`
-**Repair source commit:** `335ef9efc0c6365225fd99d8464fd208c1bfb37d`
-**Deployment:** Azure Static Web Apps production, `sociobot/sf-promptless-ml-lab`
+**Candidate:** `d2fecbe873934600a30601625168580bf83ea6bf`
 **Live URL:** https://promptless-ml-lab.sociobot.in
-**Verified deployed build:** `335ef9efc0c6`
+**Live build:** `d2fecbe87393` (footer identity and byte-for-byte asset match)
 
-## What changed
+The candidate is accepted. There are no release-blocking, high, medium, or low defects.
 
-Closed F-13-1 without changing the landing preview or any passed product
-behavior. `.factory/claims.json` now declares `sample-passed-trace` for the
-landing sample passed-record preview:
+## What was independently verified
 
-> The landing sample passed record has seven results from 0 to 1.
+- First-read landing requirement passed: it plainly states the PyTorch-drill job, self-taught ML audience, and first action. The visible one-click sample opened the isolated seed-11 tensor-shape demo with a persistent demo banner.
+- Required claims gate passed: `.factory/claims.json` exists; all 24 exact manifest commands passed separately from the demo entry point.
+- Clean local checks passed: `npm ci`, `npm test` (49/49), `npm run lint`, `npm run build`, and `npm audit --audit-level=high`.
+- Live normal, invalid, and recovery flows passed: reject invalid answer, complete a fixed drill, save/export/replay its seven-point record, reject bad JSON, preview/import valid JSON, and preserve demo/real storage isolation.
+- The live request log was same-origin GET-only with no record-marker leak; console and page errors were empty.
+- Desktop and 390px mobile passed, including keyboard activation, visible 4px focus, zero horizontal overflow, and reduced motion.
+- Live axe found 0 serious/critical violations across landing, demo, privacy, and terms. PWA update check and offline saved-record reload passed.
+- Live response/security/cache policy, 404 behavior, and build parity passed. Lighthouse mobile scored 99 performance / 100 accessibility / 100 best practices / 100 SEO (LCP 1.2s, CLS 0).
 
-Its one exact tagged regression test starts from the landing preview, opens the
-seed-11 demo, completes the sample with `x.shape`, exports the resulting
-record, and asserts `pass: true`, `tensor-shapes`, seed `11`, exactly seven
-points, start `0`, and end `1`. This proves both the visible numerical claim
-and the actual export users receive.
-
-The manifest now has 24 unique claim IDs, each with exactly one corresponding
-`@claim:<id>` test tag. The unchanged `deterministic-trace` claim continues to
-prove repeated runs are identical; the new claim separately proves the
-preview's advertised endpoints.
-
-## Verification
-
-- Clean `npm ci`: passed; 25 packages audited, 0 vulnerabilities.
-- Every exact command in the 24-entry claims manifest was run separately and
-  passed, including `npm test -- --grep @claim:sample-passed-trace`.
-- `npm test`: passed, **49/49** Playwright tests.
-- `npm run lint`, `npm run build`, `npm audit --audit-level=high`, and
-  `git diff --check`: passed. `dist/` was produced. Initial app JavaScript is
-  11.00 kB gzip and CSS is 3.55 kB gzip.
-- The manifest/tag audit found 24 IDs, no duplicates, and exactly one matching
-  claim tag for every ID.
-- Local `verify-url.sh` passed `/`, `/demo`, `/?demo=1`, `/lab`, `/privacy`,
-  and `/terms`, with route titles, `lang=en`, one h1, main landmark, image alt
-  coverage, labeled buttons, and no console errors. Evidence:
-  `.factory/qa-evidence/repair-7-local/`.
-- The full browser suite covers desktop and 390 px mobile, keyboard and skip
-  link behavior, focus visibility, touch targets, reduced motion, Axe
-  serious/critical violations, privacy request inspection, response headers,
-  404 status, service-worker updates, and offline saved-record replay.
-- Local mobile Lighthouse: Performance 100, Accessibility 100, Best Practices
-  100, SEO 100; FCP 1.053 s, LCP 1.504 s, TBT 0 ms, CLS 0. Report:
-  `.factory/qa-evidence/repair-7-local/lighthouse.json`.
-- Production deployment used `BUILD_ID=335ef9efc0c6 npm run build` followed by
-  `swa deploy ./dist --env production --app-name sf-promptless-ml-lab
-  --resource-group sociobot --no-use-keychain`.
-- Live `EXPECTED_BUILD_ID=335ef9efc0c6 npx playwright test -c
-  .factory/verification-11.config.ts` passed **5/5**. It verifies the public
-  build identity, desktop/mobile first read, keyboard recovery, export/import,
-  same-origin privacy requests, routes, Axe, metadata, response policy,
-  service-worker update, and offline replay.
-- A fresh live sample flow independently exported `{ drillId: "tensor-shapes",
-  seed: 11, pass: true, points: 7, start: 0, end: 1 }` from the landing preview
-  path.
-- Live `verify-url.sh` passed the same six public routes with no console
-  errors. Evidence: `.factory/qa-evidence/repair-7-live/`.
-- Live mobile Lighthouse: Performance 100, Accessibility 100, Best Practices
-  100, SEO 100; FCP 0.906 s, LCP 1.131 s, TBT 0 ms, CLS 0, transfer 49,521
-  bytes. Report: `.factory/qa-evidence/repair-7-live/lighthouse.json`.
-
-This is a static web app rather than a package, so package/consumer checks are
-not applicable. It has no account, payment, backend API, or AI endpoint; the
-privacy, response-policy, and identity checks above cover the applicable
-surface.
-
-## How to run
+## How to verify
 
 ```sh
 npm ci
@@ -82,14 +29,8 @@ npm run build
 npm audit --audit-level=high
 ```
 
-Run every `test` value in `.factory/claims.json` separately. For the deployed
-verification, run:
+Run each `test` command in `.factory/claims.json` separately. The complete independent evidence and exact results are in `.factory/verification-14.md` and `.factory/verification-14-artifacts/`.
 
-```sh
-EXPECTED_BUILD_ID=335ef9efc0c6 npx playwright test -c .factory/verification-11.config.ts
-```
+## Known gaps / next steps
 
-## Known gaps and next steps
-
-None. F-13-1 is closed with a manifest entry and an end-to-end observable
-outcome test; all prior verified behavior remains covered.
+None. This static local-first app has no account, payment, server API, package, or CLI surface; rate-limit, Entra identity, backend, and consumer-install checks are not applicable.

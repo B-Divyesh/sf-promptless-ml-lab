@@ -1,0 +1,106 @@
+{
+  "status": 200,
+  "headers": {
+    "cache-control": "public, must-revalidate, max-age=30",
+    "content-encoding": "br",
+    "content-security-policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; font-src 'self'; worker-src 'self'; manifest-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'",
+    "content-type": "text/html",
+    "date": "Sat, 29 Aug 2026 23:47:17 GMT",
+    "etag": "\"83497716\"",
+    "last-modified": "Sat, 29 Aug 2026 23:36:23 GMT",
+    "referrer-policy": "strict-origin-when-cross-origin",
+    "strict-transport-security": "max-age=10886400; includeSubDomains; preload",
+    "vary": "Accept-Encoding",
+    "x-content-type-options": "nosniff",
+    "x-dns-prefetch-control": "off",
+    "x-frame-options": "DENY",
+    "x-xss-protection": "1; mode=block"
+  },
+  "facts": {
+    "url": "https://promptless-ml-lab.sociobot.in/",
+    "title": "Seeded ML Drills — Practice PyTorch operations",
+    "lang": "en",
+    "h1": [
+      "Practice PyTorch operations in fixed drills."
+    ],
+    "visibleText": "Skip to drills\nSEED\n\nML drills\nDemo\nDrills\nPrivacy\n\nFIXED SEEDS / NO CHAT REQUIRED\n\nPractice PyTorch operations in fixed drills.\n\nFor self-taught ML learners who want one short drill with a browser check.\n\nTry it with sample data Opens a tensor-shape drill with fixed sample inputs.\n\nFree. All 30 drills are open.\nRuns stay in this browser.\nWorks offline after your first visit.\n\nSAMPLE DRILL PREVIEW\n\nRead tensor shapes\n\nSee the fixed inputs and expected result before opening the sample.\n\nTry this sample drill\nSEED\n11\nDATASET\n8 samples × 3 features\nTASK\nReturn the shape of x.\nEXPECTED RESULT\n(8, 3)\nSAMPLE PASSED RECORD\n\nRead tensor shapes · seed 11 · passed\n\nSeven repeated results: 0 → 1\n\nChoose a short ML drill.\n\nEach drill checks its stated operation against fixed drill data.\n\nOpen the 30 drills\nHow the drills work\nPick a drill.\nStart with tensors, losses, or evaluation.\nWrite one line.\nUse the supplied tiny dataset and seed.\nSave the record.\nExport the run when the check passes.\nWhat this lab does not do.\n\nIt does not host models, rank people, or give generated solutions. The checker accepts the PyTorch operation named in each drill. It reruns the same seven results from the same inputs. It does not execute arbitrary Python or PyTorch.\n\nShort ML practice with fixed inputs.\n\nPrivacy · Terms · Built by Param Factory · v1.0.0 · build d2fecbe87393",
+    "buttons": [
+      {
+        "tag": "A",
+        "text": "Skip to drills",
+        "href": "https://promptless-ml-lab.sociobot.in/#main"
+      },
+      {
+        "tag": "A",
+        "text": "SEED\n\nML drills",
+        "href": "https://promptless-ml-lab.sociobot.in/"
+      },
+      {
+        "tag": "A",
+        "text": "Demo",
+        "href": "https://promptless-ml-lab.sociobot.in/demo"
+      },
+      {
+        "tag": "A",
+        "text": "Drills",
+        "href": "https://promptless-ml-lab.sociobot.in/#catalog"
+      },
+      {
+        "tag": "A",
+        "text": "Privacy",
+        "href": "https://promptless-ml-lab.sociobot.in/privacy"
+      },
+      {
+        "tag": "A",
+        "text": "Try it with sample data",
+        "href": "https://promptless-ml-lab.sociobot.in/demo"
+      },
+      {
+        "tag": "A",
+        "text": "Try this sample drill",
+        "href": "https://promptless-ml-lab.sociobot.in/demo"
+      },
+      {
+        "tag": "A",
+        "text": "Open the 30 drills",
+        "href": "https://promptless-ml-lab.sociobot.in/demo"
+      },
+      {
+        "tag": "A",
+        "text": "Privacy",
+        "href": "https://promptless-ml-lab.sociobot.in/privacy"
+      },
+      {
+        "tag": "A",
+        "text": "Terms",
+        "href": "https://promptless-ml-lab.sociobot.in/terms"
+      }
+    ],
+    "build": [
+      "build d2fecbe87393"
+    ]
+  },
+  "errors": [],
+  "requests": [
+    {
+      "url": "https://promptless-ml-lab.sociobot.in/",
+      "method": "GET",
+      "type": "document"
+    },
+    {
+      "url": "https://promptless-ml-lab.sociobot.in/assets/index-Dk-Nuq9w.js",
+      "method": "GET",
+      "type": "script"
+    },
+    {
+      "url": "https://promptless-ml-lab.sociobot.in/assets/index-DHMkLhsd.css",
+      "method": "GET",
+      "type": "stylesheet"
+    },
+    {
+      "url": "https://promptless-ml-lab.sociobot.in/assets/concrete-moss-lab.webp",
+      "method": "GET",
+      "type": "image"
+    }
+  ]
+}

@@ -1,0 +1,84 @@
+{
+  "origin": "https://promptless-ml-lab.sociobot.in",
+  "checkedAt": "2026-08-29T23:50:26.635Z",
+  "desktop": {
+    "demoTitle": "Demo — Seeded ML Drills",
+    "demoBuild": "d2fecbe87393",
+    "invalidResult": "Not yet. Use a valid answer line that produces (8, 3), then run checks again. (fixture changed)",
+    "passedResult": "Passed. Saved a replayable record with seed 11.",
+    "export": {
+      "name": "seeded-ml-drills-demo-records.json",
+      "count": 2,
+      "run": {
+        "drillId": "tensor-shapes",
+        "seed": 11,
+        "pass": true,
+        "points": 7
+      }
+    },
+    "replay": "Replay checked the saved source: passed with seed 11.",
+    "badImport": "Nothing was imported. Choose an exported Seeded ML Drills JSON file.",
+    "importPreview": "1 record is valid. Review the count, then import.",
+    "importResult": "Imported 1 run record into this demo workbench.",
+    "storage": {
+      "demo": "[{\"id\":\"verify-14-import\",\"drillId\":\"tensor-shapes\",\"at\":\"2026-08-29T00:00:00.000Z\",\"seed\":11,\"pass\":true,\"code\":\"# Seeded ML Drills — edit only the TODO line\\nimport torch\\nSEED = 11\\ntorch.manual_seed(SEED)\\n\\nx = torch.tensor([[0.1, 0.2, 0.3]] * 8)\\n# TODO: write one line below\\n\\nx.shape\",\"trace\":[0,0.1,0.2,0.3,0.5,0.8,1],\"version\":1},{\"id\":\"398f5e69-42c3-4ce4-9754-52ce4f7e405c\",\"drillId\":\"tensor-shapes\",\"at\":\"2026-08-29T23:50:28.953Z\",\"seed\":11,\"pass\":true,\"code\":\"# Seeded ML Drills — edit only the TODO line\\nimport torch\\nSEED = 11\\ntorch.manual_seed(SEED)\\n\\nx = torch.tensor([[0.1, 0.2, 0.3]] * 8)\\n# TODO: write one line below\\n\\nx.shape\",\"trace\":[0,0.275,0.453,0.607,0.747,0.877,1],\"version\":1},{\"id\":\"01f1776a-5906-4a82-9828-f58eb1c411bb\",\"drillId\":\"tensor-shapes\",\"at\":\"2026-08-29T23:50:28.548Z\",\"seed\":11,\"pass\":false,\"code\":\"# qa invalid only\",\"trace\":[0,0.275,0.453,0.607,0.747,0.877,1],\"version\":1}]",
+      "real": null
+    },
+    "requests": {
+      "count": 6,
+      "thirdParty": [],
+      "nonGet": [],
+      "markerLeak": []
+    },
+    "errors": []
+  },
+  "mobile": {
+    "focus": {
+      "text": "Try it with sample data",
+      "tag": "A",
+      "outline": "rgb(20, 62, 153) solid 4px",
+      "outlineWidth": "4px",
+      "outlineStyle": "solid"
+    },
+    "overflow": 0,
+    "route": "https://promptless-ml-lab.sociobot.in/demo",
+    "animationDuration": "0s",
+    "errors": []
+  },
+  "axe": {
+    "/": {
+      "serious": 0,
+      "critical": 0,
+      "total": 0
+    },
+    "/demo": {
+      "serious": 0,
+      "critical": 0,
+      "total": 0
+    },
+    "/privacy": {
+      "serious": 0,
+      "critical": 0,
+      "total": 0
+    },
+    "/terms": {
+      "serious": 0,
+      "critical": 0,
+      "total": 0
+    }
+  },
+  "offline": {
+    "sw": {
+      "controller": "activated",
+      "active": "activated",
+      "waiting": false,
+      "scope": "https://promptless-ml-lab.sociobot.in/"
+    },
+    "offlineState": {
+      "online": false,
+      "record": "[{\"id\":\"1a9d00b0-9bb8-416d-b427-35b66593047d\",\"drillId\":\"tensor-shapes\",\"at\":\"2026-08-29T23:50:37.387Z\",\"seed\":11,\"pass\":true,\"code\":\"# Seeded ML Drills — edit only the TODO line\\nimport torch\\nSEED = 11\\ntorch.manual_seed(SEED)\\n\\nx = torch.tensor([[0.1, 0.2, 0.3]] * 8)\\n# TODO: write one line below\\n\\nx.shape\",\"trace\":[0,0.275,0.453,0.607,0.747,0.877,1],\"version\":1}]",
+      "result": ""
+    },
+    "errors": []
+  }
+}

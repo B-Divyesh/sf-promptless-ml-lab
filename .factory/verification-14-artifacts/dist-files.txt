@@ -1,0 +1,15 @@
+dist/404.css 2360 bytes
+dist/404.html 1968 bytes
+dist/apple-touch-icon.png 56729 bytes
+dist/assets/checker-worker-OxTQkAR8.js 11756 bytes
+dist/assets/concrete-moss-lab-640.webp 33170 bytes
+dist/assets/concrete-moss-lab.webp 157900 bytes
+dist/assets/index-DHMkLhsd.css 12401 bytes
+dist/assets/index-Dk-Nuq9w.js 29611 bytes
+dist/assets/seeded-ml-drills-og.webp 106590 bytes
+dist/favicon.svg 209 bytes
+dist/index.html 1548 bytes
+dist/robots.txt 82 bytes
+dist/sitemap.xml 444 bytes
+dist/staticwebapp.config.json 911 bytes
+dist/sw.js 1496 bytes
