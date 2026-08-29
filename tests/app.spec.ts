@@ -201,6 +201,7 @@ test('@regression:landing-preview shows a read-only sample drill before the cata
   await expect(preview.getByText('Return the shape of x.')).toBeVisible();
   await expect(preview.getByText('(8, 3)', { exact: true })).toBeVisible();
   await expect(preview.getByRole('heading', { name: 'Sample passed record' })).toBeVisible();
+  await expect(preview.getByText('Seven repeated results: 0 → 1')).toBeVisible();
   await preview.getByRole('link', { name: 'Try this sample drill' }).click();
   await expect(page).toHaveURL(/\/demo$/);
   await expect(page.getByRole('heading', { name: 'Read tensor shapes' })).toBeVisible();

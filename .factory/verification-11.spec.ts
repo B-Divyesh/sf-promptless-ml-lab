@@ -3,6 +3,7 @@ import AxeBuilder from '@axe-core/playwright';
 
 const origin = 'https://promptless-ml-lab.sociobot.in';
 const evidence = '.factory/qa-11';
+const expectedBuildId = process.env.EXPECTED_BUILD_ID;
 
 function luminance(rgb: string) {
   const channels = rgb.match(/\d+(?:\.\d+)?/g)?.slice(0, 3).map(Number);
@@ -248,7 +249,7 @@ test('headers, cache policy, build identity, service-worker update and offline r
   expect(art.headers()['cache-control']).not.toContain('immutable');
   expect((await request.get('/sw.js')).headers()['cache-control']).toContain('max-age=30');
   await page.goto('/');
-  await expect(page.locator('footer')).toContainText('build d717c1068864');
+  await expect(page.locator('footer')).toContainText(expectedBuildId ? `build ${expectedBuildId}` : /build [0-9a-f]{12}/);
   const state = await page.evaluate(async () => {
     const registration = await navigator.serviceWorker.ready;
     await registration.update();
