@@ -1,7 +1,10 @@
-# Copy audit — polish round 2
+# Copy audit — polish round 3
 
 Counts treat hyphenated terms, paths, and version strings as one word. No
 visitor-facing unit exceeds 22 words or uses a banned marketing word.
+
+The 390 × 844 first-screen check also confirms that all three landing facts
+are fully visible before scrolling.
 
 ## Landing page
 
@@ -75,6 +78,14 @@ visitor-facing unit exceeds 22 words or uses a banned marketing word.
 - The README uses sentences of 22 words or fewer.
 - `@regression:review-copy` rejects every retired phrase and
   `@regression:plain-words` checks visible sentence lengths and banned words.
+
+## Catalog description
+
+| Copy unit | Words | Characters | Flag |
+|---|---:|---:|---|
+| Practice PyTorch with 30 seeded drills and immediate browser checks. | 10 | 68 | — |
+
+It begins with a verb and stays below the 120-character limit.
 
 ## Terminology
 

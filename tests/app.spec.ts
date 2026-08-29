@@ -456,6 +456,25 @@ test('@regression:mobile-overflow every 390px route fits and keeps the primary a
   expect(primary!.y + primary!.height).toBeLessThanOrEqual(844);
 });
 
+test('@regression:first-screen-facts all three landing facts fit in the 390px first screen', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  const facts = await page.locator('.facts li').evaluateAll((items) => items.map((item) => {
+    const box = item.getBoundingClientRect();
+    return { text: item.textContent?.trim(), top: box.top, bottom: box.bottom };
+  }));
+  expect(facts.map(({ text }) => text)).toEqual([
+    'Free. All 30 drills are open.',
+    'Runs stay in this browser.',
+    'Works offline after your first visit.'
+  ]);
+  expect(facts).toHaveLength(3);
+  for (const fact of facts) {
+    expect(fact.top, `${fact.text} should start in the first viewport`).toBeGreaterThanOrEqual(0);
+    expect(fact.bottom, `${fact.text} should be fully visible in the first viewport`).toBeLessThanOrEqual(844);
+  }
+});
+
 test('@regression:route-focus navigation and browser history focus and announce each page', async ({ page }) => {
   await page.goto('/');
   await page.getByRole('link', { name: 'Privacy', exact: true }).first().click();

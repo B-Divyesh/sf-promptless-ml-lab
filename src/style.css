@@ -142,6 +142,7 @@ footer p { max-width:36ch; margin:0; } footer a { display:inline-flex; align-ite
   header,main,footer { padding-left:18px; padding-right:18px; }
   nav { gap:11px; }
   .wordmark { font-size:18px; }
+  .facts { margin-top:18px; }
   .demo-banner strong { flex-basis:100%; }
   .drill-list { grid-template-columns:1fr; }
   .exercise-head { display:grid; grid-template-columns:minmax(0,1fr) auto; }
