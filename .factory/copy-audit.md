@@ -37,7 +37,7 @@ are fully visible before scrolling.
 | Expected result | 2 | — |
 | (8, 3) | 1 | — |
 | Sample passed record | 3 | — |
-| Seven repeated results: 0.9 → 0.1 | 5 | — |
+| Seven repeated results: 0 → 1 | 5 | — |
 | Choose a short ML drill. | 5 | — |
 | Each drill checks its stated operation against fixed drill data. | 10 | — |
 | Open the 30 drills | 4 | — |
@@ -98,7 +98,7 @@ are fully visible before scrolling.
 
 | Copy unit | Words | Characters | Flag |
 |---|---:|---:|---|
-| Practice PyTorch operations through 30 fixed drills with browser checks. | 10 | 70 | — |
+| Practice PyTorch operations through 30 fixed drills with browser checks. | 10 | 72 | — |
 
 It begins with a verb and stays below the 120-character limit.
 
