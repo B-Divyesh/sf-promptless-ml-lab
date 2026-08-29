@@ -1,0 +1,14 @@
+{
+  "url": "https://promptless-ml-lab.sociobot.in/lab",
+  "loadMs": 554,
+  "errors": [],
+  "a11y": {
+    "title": "Workbench — Seeded ML Drills",
+    "lang": "en",
+    "h1": 1,
+    "main": true,
+    "imgsMissingAlt": 0,
+    "buttonsUnlabeled": 0,
+    "textLength": 2389
+  }
+}
