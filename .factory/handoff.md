@@ -1,52 +1,79 @@
-# Handoff — adversarial first-read review 2
+# Handoff — perfection loop round 2
 
 ## Result
 
-**FAIL.** Review 2 is recorded in `.factory/review-2.md` and committed without
-product-code changes. The main blocker is the 390 px demo first screen: the
-sample task starts below the fold, so the one-click demo does not immediately
-show realistic sample data in use.
+**PASS.** Every finding in `.factory/review-1.md` and
+`.factory/review-2.md` is closed. The repaired static site is live at
+https://promptless-ml-lab.sociobot.in from repair commit
+`74e0fd0def968336e69180594007dd8e608a5d5a`.
 
-The report also records three unlisted README claims, specific plain-copy and
-terminology findings, and the missing import counterpart to local JSON export.
+The demo now opens with the active seed-11 drill before the catalog on mobile.
+At 390×844, the drill title, dataset, expected result, task, and editable
+starter all intersect the first viewport. The persistent banner supports Reset
+demo and Open your real workbench on both `/demo` and `/?demo=1`.
 
-## Verification performed
+Run-record JSON can now be imported locally. The app checks the format,
+version, drill IDs, seeds, timestamps, code size, and seven numeric results. It
+previews the count before confirmation, rejects malformed and duplicate
+records, caps the combined history at 100, writes only to the active storage
+namespace, and replays imported records.
 
-- Opened the live landing cold in fresh 390 × 844 and 1440 × 900 Chromium
-  contexts.
-- Exercised the live sample, passing check, demo/real storage boundary, Reset,
-  offline reload, request log, routes, metadata, link crawl, history focus,
-  mobile layout, and axe checks.
-- Ran `/opt/fleet/lib/verify-url.sh` against the live root; it found no console
-  or basic semantic error.
-- Cloned commit `21f16f1c259535e5fa7568a814d7002c55cee814` to
-  `/tmp/promptless-review-2-45H0Eg/repo`, installed from the lockfile, and ran
-  every one of the 17 claim commands separately. All passed with exactly one
-  selected test.
-- Ran the complete clean-clone suite: 37/37 passed.
-- Ran `npm run build` and `npm run lint`; both passed. Initial JavaScript is
-  9.79 kB gzip.
-- Ran `npm audit --omit=dev`; production dependencies have zero reported
-  vulnerabilities. `npm ci` reported four advisories in development tooling.
-- Rechecked every F-1 finding against the live page and source. All nine remain
-  fixed; none was reopened.
+The copy now uses “drill” consistently and removes every flagged phrase. The
+README claims for build output and deployment behavior are declared and
+tested. The former emulator install claim was replaced by a command-only
+instruction, and its vulnerable dependency was removed. `npm audit` now
+reports zero vulnerabilities.
+
+## Verification
+
+- Clean clone: `/tmp/promptless-polish2-Mh26uu/repo` at the repair commit.
+- Claims: all 22 commands in `.factory/claims.json` ran separately; 22/22
+  passed and each selected exactly one tagged test.
+- Full browser suite: 43/43 passed from the clean clone.
+- Static checks: `npm run lint`, `npm run build`, and `npm audit` passed.
+- Build budget: initial JavaScript 10.68 kB gzip; CSS 3.34 kB gzip.
+- Accessibility: Playwright axe found no serious or critical issues on every
+  public route at desktop and mobile sizes. Keyboard, focus, 44 px targets,
+  reduced motion, headings, landmarks, labels, and 390 px overflow tests pass.
+- Privacy: complete landing, demo, check, import, reset, and offline request
+  logs use only the product origin. No analytics, remote fonts, or third-party
+  scripts load.
+- Offline: `/demo` reloads from a cold service-worker cache after the browser
+  context goes offline.
+- Routing: `/`, `/demo`, `/?demo=1`, `/lab`, `/privacy`, and `/terms` return
+  200 with route-specific metadata. An unknown route returns the designed 404
+  with HTTP 404. Client navigation and browser history restore h1 focus.
+- URL verifier: all six live entries passed with zero console errors. Evidence
+  is under `.factory/qa-evidence/polish2-live-*`.
+- Local Lighthouse mobile: 99 performance, 100 accessibility, 100 best
+  practices, 100 SEO; LCP 2.1 s, TBT 10 ms, CLS 0, transfer 198 KiB.
+- Live Lighthouse mobile: 100 performance, 100 accessibility, 100 best
+  practices, 100 SEO; FCP 0.9 s, LCP 1.7 s, TBT 0 ms, CLS 0, transfer 170 KiB.
+- Live acceptance: 4/4 tests in `.factory/live-polish-2.spec.ts` passed.
+
+## Deployment
+
+- Command: `/opt/fleet/lib/deploy-static.sh promptless-ml-lab dist`
+- Azure Static Web Apps deployment: `accd111e-c05e-4830-ba64-89ea036392b6`
+- Region: `centralus`
+- Custom domain: `https://promptless-ml-lab.sociobot.in` returned 200 with
+  managed TLS after deployment.
+- Cold live bundle reports build `74e0fd0def96`.
 
 ## How to verify
 
 ```sh
 npm ci
 npm test
-npm run build
 npm run lint
-npm audit --omit=dev
+npm run build
+npm audit
+npx playwright test --config .factory/live-polish-2.config.ts
 ```
 
-For the blocking check, open
-https://promptless-ml-lab.sociobot.in at 390 × 844, select **Try it with sample
-data**, and do not scroll. The selected exercise heading is currently below the
-first viewport; its fixture and editor are farther down.
+See `.factory/polish-2.md` for the finding-by-finding evidence map.
 
-## Product changes
+## Known gaps and next steps
 
-None. Only `.factory/review-2.md` and this handoff were added or updated, as
-required by the reviewer work order.
+None for the reviewed scope. No finding, deferred minor item, stub, or TODO
+remains.

@@ -29,7 +29,8 @@ notebook feel while the dark ink and moss have high contrast.
 exercise names and learning notes. `Arial` / `Helvetica` is the concise lab
 label voice for instructions, controls, and numbers. No remote font is loaded.
 The rhythm is an 8px grid. Wide screens use an offset two-column workbench;
-the mobile layout stacks the run controls before the trace.
+the mobile layout puts the selected drill before the catalog. Its seed, fixed
+inputs, expected result, and editor appear together in the first viewport.
 
 Cards are squared slabs with 2px ink edges and hard 5px concrete shadows.
 Buttons are stamped rectangles. Fine grid lines and small seed dots create a
