@@ -1,5 +1,7 @@
 import { expect, test } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
+import { drills } from '../src/drills';
+import { drillContracts } from '../src/drill-contracts';
 
 async function passFirstDrill(page: import('@playwright/test').Page) {
   await page.goto('/demo');
@@ -74,6 +76,76 @@ test('service worker is active with no pending update after an update check', as
 test('@claim:thirty-open-drills demo exposes all 30 drills', async ({ page }) => {
   await page.goto('/demo');
   await expect(page.locator('[data-drill]')).toHaveCount(30);
+});
+
+test('@claim:catalog-evaluator every drill accepts its intended operation and rejects an unrelated shortcut', async ({ page }) => {
+  test.setTimeout(120_000);
+  expect(drills).toHaveLength(30);
+  expect(Object.keys(drillContracts).sort()).toEqual(drills.map(({ id }) => id).sort());
+  await page.goto('/demo');
+
+  for (const drill of drills) {
+    const contract = drillContracts[drill.id];
+    await page.locator(`[data-drill="${drill.id}"]`).click();
+    await page.locator('#code').fill(`${drill.starter}\n${contract.answers[0]}`);
+    await page.getByRole('button', { name: 'Run hidden checks' }).click();
+    await expect(page.locator('#result'), `${drill.id} should accept ${contract.answers[0]}`).toContainText('Passed.');
+
+    await page.locator('#code').fill(`${drill.starter}\n${contract.shortcut}`);
+    await page.getByRole('button', { name: 'Run hidden checks' }).click();
+    await expect(page.locator('#result'), `${drill.id} should reject ${contract.shortcut}`).toContainText('Not yet.');
+  }
+});
+
+test('@regression:standardize-dimension zero-argument tensor reductions do not receive a phantom dimension', async ({ page }) => {
+  await page.goto('/demo');
+  const drill = drills.find(({ id }) => id === 'standardize')!;
+  await page.locator('[data-drill="standardize"]').click();
+  await page.locator('#code').fill(`${drill.starter}\n(x - x.mean()) / x.std()`);
+  await page.getByRole('button', { name: 'Run hidden checks' }).click();
+  await expect(page.locator('#result')).toContainText('Passed.');
+  await expect(page.locator('#result')).not.toContainText('dimension unsupported');
+});
+
+test('@regression:stateful-contract gradient, validation, and replay drills reject the verifier shortcuts', async ({ page }) => {
+  await page.goto('/demo');
+  for (const id of ['gradient-step', 'early-stop', 'replay-seed']) {
+    const drill = drills.find((candidate) => candidate.id === id)!;
+    const contract = drillContracts[id];
+    await page.locator(`[data-drill="${id}"]`).click();
+    await page.locator('#code').fill(`${drill.starter}\n${contract.answers[0]}`);
+    await page.getByRole('button', { name: 'Run hidden checks' }).click();
+    await expect(page.locator('#result')).toContainText('Passed.');
+    await page.locator('#code').fill(`${drill.starter}\n${contract.shortcut}`);
+    await page.getByRole('button', { name: 'Run hidden checks' }).click();
+    await expect(page.locator('#result')).toContainText('Not yet.');
+  }
+});
+
+test('@claim:free-access every drill is available without a paywall', async ({ page }) => {
+  await page.goto('/demo');
+  await expect(page.locator('[data-drill]')).toHaveCount(30);
+  expect(await page.locator('[data-drill]:disabled').count()).toBe(0);
+  await expect(page.getByText(/checkout|subscribe|payment required/i)).toHaveCount(0);
+});
+
+test('@claim:no-chat-required a drill completes without chat, an account, or a remote request', async ({ page }) => {
+  const requests: import('@playwright/test').Request[] = [];
+  page.on('request', (request) => requests.push(request));
+  await passFirstDrill(page);
+  await expect(page.getByRole('button', { name: /chat|sign in|create account/i })).toHaveCount(0);
+  expect(requests.every((request) => request.method() === 'GET' && new URL(request.url()).origin === 'http://127.0.0.1:4173')).toBeTruthy();
+});
+
+test('@claim:scope-limits the lab has no hosting, ranking, or generated-solution flow', async ({ page }) => {
+  await page.goto('/demo');
+  await expect(page.locator('input[type="file"]')).toHaveCount(0);
+  await expect(page.getByRole('button', { name: /host|deploy|rank|leaderboard|generate|show solution/i })).toHaveCount(0);
+  const drill = drills[0];
+  await page.locator('#code').fill(`${drill.starter}\n[8, 3]`);
+  await page.getByRole('button', { name: 'Run hidden checks' }).click();
+  await expect(page.locator('#result')).toContainText('Not yet.');
+  await expect(page.locator('#result')).not.toContainText(/solution is|try x\.shape/i);
 });
 
 test('@claim:estimated-drill-duration every listed drill has a 6–10 minute estimate', async ({ page }) => {
@@ -161,7 +233,7 @@ test('@regression:sw-navigation a stale cached demo document is refreshed online
   await page.goto('/demo');
   await page.evaluate(async () => {
     await navigator.serviceWorker.ready;
-    const cache = await caches.open('seeded-ml-drills-v3');
+    const cache = await caches.open('seeded-ml-drills-v4');
     await cache.put('/demo', new Response('<title>stale demo</title><p>stale</p>', { headers: { 'content-type': 'text/html' } }));
   });
   await page.reload();

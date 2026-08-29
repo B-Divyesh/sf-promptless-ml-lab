@@ -15,10 +15,12 @@ key. **Reset demo** clears that key. **Start for real** discards demo records,
 then switches to the separate `real:seeded-ml-runs` key.
 
 The browser check runs a supported expression against each drill’s immutable
-fixed exercise fixture and replays the drill's fixed trace. It rejects changed
-fixtures and incomplete expressions. It is deliberately
-transparent: it does not execute arbitrary Python or PyTorch. Use your own
-Python environment for production verification.
+fixed exercise fixture and replays the drill's fixed trace. An answer must use
+the operation named by the drill and produce the expected value. It rejects
+changed fixtures, unrelated shortcuts, and incomplete expressions. The test
+suite checks this contract for all 30 drills. The evaluator does not execute
+arbitrary Python or PyTorch. Use your own Python environment for production
+verification.
 
 ## Develop
 

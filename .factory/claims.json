@@ -35,6 +35,13 @@
     "sandbox": "fresh demo; assert the drill catalog contains exactly 30 drill controls"
   },
   {
+    "id": "catalog-evaluator",
+    "claim": "Each of the 30 drills checks its stated operation against fixed exercise data.",
+    "where": "landing catalog, workbench, README",
+    "test": "npm test -- --grep @claim:catalog-evaluator",
+    "sandbox": "fresh demo; for all 30 drills submit the catalog's intended operation and assert pass, then submit its unrelated shortcut and assert rejection"
+  },
+  {
     "id": "fixture-evaluator",
     "claim": "The browser check evaluates a supported answer line against fixed exercise data.",
     "where": "landing limitation, README",
@@ -75,5 +82,26 @@
     "where": "demo banner, demo documentation, README",
     "test": "npm test -- --grep @claim:real-workbench",
     "sandbox": "fresh demo; select Start for real; pass one drill; assert the real key is written and the demo key is untouched"
+  },
+  {
+    "id": "free-access",
+    "claim": "Free. All 30 drills are open.",
+    "where": "landing facts, terms",
+    "test": "npm test -- --grep @claim:free-access",
+    "sandbox": "fresh demo; assert all 30 drill controls are enabled and no checkout, subscription, or payment-required state is present"
+  },
+  {
+    "id": "no-chat-required",
+    "claim": "No chat required.",
+    "where": "landing eyebrow, README",
+    "test": "npm test -- --grep @claim:no-chat-required",
+    "sandbox": "fresh demo; complete a drill without chat or account controls and assert every request is a same-origin GET"
+  },
+  {
+    "id": "scope-limits",
+    "claim": "It does not host models, rank people, or give generated solutions.",
+    "where": "landing limitations",
+    "test": "npm test -- --grep @claim:scope-limits",
+    "sandbox": "fresh demo; assert there are no hosting, upload, ranking, or solution-generation controls and a shortcut receives feedback without revealing an answer"
   }
 ]

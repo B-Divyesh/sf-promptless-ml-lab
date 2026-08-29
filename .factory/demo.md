@@ -3,6 +3,10 @@
 Open `/demo` (or `/?demo=1`) for the one-click sample. It starts with the
 first of 30 fixed drills: tensor shapes, seed 11, and an 8 × 3 toy tensor.
 
+Each drill has an explicit operation contract. The browser evaluator checks
+both that operation and its result against the fixed fixture. The regression
+suite submits one intended answer and one unrelated shortcut for every drill.
+
 Demo run records are stored only under `demo:seeded-ml-runs` in browser local
 storage. Real mode uses `real:seeded-ml-runs`; demo never reads or writes that
 key. **Reset demo** removes the demo key. **Start for real** discards the demo
