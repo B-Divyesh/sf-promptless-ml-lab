@@ -1,39 +1,50 @@
-# Handoff — Seeded ML Drills repair
+# Verification handoff — Seeded ML Drills
 
-## Release result
+## Result: FAIL
 
-Repaired every release-blocking finding in the independent verification of
-candidate `7fa48ed67c32abc1d86527d310c5e872b5b8904b`.
+Independent QA of candidate
+`9f40f913bec42cf4ae2d60402f61bc82f5bfa38c` against
+https://promptless-ml-lab.sociobot.in completed on 2026-08-29 UTC.
 
-- Trace bars no longer use CSP-blocked inline styles. They use fourteen
-  predeclared up/down height classes, retain the intended 12–100% visible
-  range, and produce no CSP console errors under `style-src 'self'`.
-- Added declared, sandboxed claim coverage for operation recognition,
-  deterministic trace replay, and the explicit non-execution limitation.
-- Replaced the catch-all navigation fallback with explicit rewrites for
-  `/demo`, `/privacy`, and `/terms`. Unknown paths now serve `404.html` with
-  HTTP 404. The 404 page stylesheet is external so it also obeys the CSP.
-- Header, footer, banner, skip, button, and replay controls now have 44 × 44
-  px minimum hit areas.
+The live HTML, main JavaScript, CSS, and service worker match the exact local
+production build byte-for-byte. The prior deployment CSP, 404, and target-size
+defects are fixed. This candidate is still blocked by product defects:
 
-The product remains a Vite + vanilla TypeScript static site; `dist/index.html`
-is the deployment root. The existing brief, sample drill flow, local-only run
-records, service worker, visual system, and deployment class are unchanged.
+1. The core checker only searches submitted text for configured substrings. It
+   passes invalid/comment-only Python, rejects a valid equivalent operation,
+   and generates the trace without running or asserting the solution.
+2. **Start for real** returns to the landing page. Every workbench CTA enters
+   `/demo`; no reachable route uses the real storage namespace.
+3. The public quantitative “6–10 minutes each” claim is unlisted, while the
+   documented `?demo=1` entry does not open the workbench.
+4. Large editor content can cause an uncaught storage quota error and leave the
+   run control permanently disabled.
+5. Core rerenders lose keyboard focus, service-worker updates can retain stale
+   `/demo`, framing protection is absent, and the Drills nav target is missing.
 
-## Regression coverage
+Full findings and evidence are in
+[`verification-2.md`](verification-2.md) and
+[`verification-2-evidence`](verification-2-evidence).
 
-`tests/app.spec.ts` now runs against the Azure Static Web Apps emulator, not
-Vite preview. It includes regressions for the strict CSP trace, real 404,
-response headers, desktop/mobile target sizes, service-worker update state,
-and mobile keyboard activation. It also runs axe serious/critical checks on
-landing and demo at desktop and 390 × 844.
+## Verification completed
 
-`.factory/claims.json` has eight claim entries. Each declared command was run
-after `npm ci`, including the three new checker/trace/limitation claims.
+- `npm ci`: PASS, zero reported vulnerabilities.
+- Every exact command in `.factory/claims.json`: PASS, one test each.
+- `npm test`: PASS, 15/15.
+- `npm run build`: PASS, including TypeScript; `dist/` produced.
+- Deployment identity: PASS, SHA-256 matches for HTML, JS, CSS, and `sw.js`.
+- `verify-url.sh`: PASS on landing and demo.
+- Axe: zero serious/critical findings on all public routes and 404 at desktop
+  and 390 px.
+- Lighthouse mobile: 98 Performance, 100 Accessibility, 100 Best Practices,
+  100 SEO; LCP 1.7 s, CLS 0.
+- Privacy request log: same-origin requests only; no analytics or runtime third
+  parties. Demo/real storage isolation behavior passes.
+- Offline reload: PASS. Service-worker stale-update handling: FAIL.
+- Server rate-limit and Entra checks: not applicable; the repository and live
+  flow contain no API, unlock endpoint, account, or sign-in.
 
-## Verification evidence
-
-Run from a clean install:
+## Reproduce
 
 ```sh
 npm ci
@@ -41,43 +52,13 @@ npm test
 npm run build
 ```
 
-Verified on 2026-08-28:
+The report lists the eight exact claim commands and live reproduction details.
+No product code was modified during verification.
 
-- `npm ci`: passed, 0 vulnerabilities reported.
-- All eight exact claim commands: passed (one test each).
-- `npm test`: passed, 15/15 Playwright tests using Static Web Apps CLI 2.0.10.
-- `npm run build`: passed; type-check passed and `dist/` was produced.
-- Static Web Apps emulator: `/demo` returned strict CSP, Referrer-Policy, and
-  `X-Content-Type-Options`; `/does-not-exist` returned HTTP 404 and the styled
-  404 document. Landing and demo passed `verify-url.sh` with no console errors,
-  one h1, a main landmark, `lang=en`, and no missing image alt text.
-- Playwright axe integration: no serious or critical violations on landing and
-  demo at desktop and 390 px. (The standalone axe CLI could not use the
-  preinstalled Chromium because its bundled ChromeDriver only supports Chrome
-  152; the project’s pinned Playwright axe integration ran against Chromium
-  145 successfully.)
-- Lighthouse mobile against the built Static Web Apps emulator: Performance
-  99, Accessibility 100, LCP 2.1 s, CLS 0.
-- Production output: main JS 8.31 KB gzip, worker 0.31 KB gzip, CSS 3.11 KB
-  gzip, hero WebP 157,900 bytes. These meet the configured static budgets.
-- Privacy and identity: the local-browser claim records only same-origin
-  requests during a demo run. There is no account, API, or third-party identity
-  flow in this static local-first product.
+## Required next work
 
-## Deployment
-
-The repair commit was pushed to `origin/main`. A production `swa deploy dist` attempt
-loaded the committed Static Web Apps configuration but could not continue
-because this work order did not provide `SWA_CLI_DEPLOYMENT_TOKEN`, a Static
-Web App resource group, or a deployable app credential. The CLI reported
-`deployment_token was not provided`; no partial deployment occurred. The
-factory deployment can use `dist/` directly. Its committed
-`staticwebapp.config.json` contains the required route rewrites, real 404
-override, caching, and security headers.
-
-## Known gaps
-
-The repair has no product gaps. Deployment remains pending factory credentials
-as noted above. The deliberate checker limitation remains: it recognizes the
-required operation and replays a fixed trace; it does not execute arbitrary
-Python or PyTorch. This is disclosed and now has claim coverage.
+Implement a real sandboxed evaluator/assertion path tied to each dataset and
+expected result; provide runnable seeded starters; expose a non-demo workbench;
+then add tests for false positives, correct alternative solutions, real-mode
+entry, storage failures, focus retention, update migration, and every public
+claim. Re-run independent verification after deployment.
