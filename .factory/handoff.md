@@ -1,9 +1,13 @@
 # Handoff — repair 6
 
-## Result: repaired and ready for release deployment
+## Result: repaired, deployed, and verified live
 
 This repair closes the single release blocker in independent verification 10
 for candidate `29d8f3c4f04a0bb2fc86d661e2055848f7456c3b`.
+
+Commit `61790d441253ad94d244123b61b33c75f7fb8052` is pushed to `main` and is
+deployed to https://promptless-ml-lab.sociobot.in through Azure Static Web Apps
+deployment `5cf8ab00-fd83-4481-a8a6-3458b1f8217e` in Central US.
 
 The verifier found that keyboard focus on the demo banner’s **Open your real
 workbench** link inherited the blue global focus ring (`rgb(20, 62, 153)`) on
@@ -55,6 +59,17 @@ same moss background.
 - Asset budgets: main JS 28,721 bytes raw / 10,738 gzip; checker worker 11,756
   bytes raw / 4,461 gzip; CSS 11,257 bytes raw / 3,361 gzip; initial HTML + CSS
   + JS 14,458 gzip; mobile hero 33,170 bytes.
+- Live deployment: `verify-url.sh` passed `/`, `/demo`, `/?demo=1`, `/lab`,
+  `/privacy`, and `/terms`, each with 200, route-specific metadata, one h1,
+  one main, labelled controls/images, and no console errors. Evidence:
+  `.factory/qa-evidence/repair6-live-*`.
+- Live identity and privacy check: the rendered footer reports build
+  `61790d441253`; desktop and 390px keyboard focus both compute to a white,
+  solid 4px outline on moss at `7.70:1`; the visited demo made same-origin GET
+  requests only and logged no console errors.
+- Live response policy: `/demo` returns HSTS, `nosniff`, strict referrer
+  policy, `X-Frame-Options: DENY`, and the declared self-only CSP including
+  `frame-ancestors 'none'`. An unknown route returns HTTP 404.
 
 ## Run and deploy
 
@@ -67,7 +82,7 @@ npm audit
 /opt/fleet/lib/deploy-static.sh promptless-ml-lab dist
 ```
 
-The work-order deployment target is the existing static product at
+The work-order deployment completed against the existing static product at
 `https://promptless-ml-lab.sociobot.in`. Verify the deployed demo by opening
 `/demo`, pressing Tab seven times from page load, and observing the white focus
 ring on **Open your real workbench**.
