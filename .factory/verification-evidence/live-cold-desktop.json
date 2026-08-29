@@ -1,0 +1,116 @@
+{
+  "status": 200,
+  "url": "https://promptless-ml-lab.sociobot.in/",
+  "title": "Seeded ML Drills — Practice reproducible models",
+  "headers": {
+    "cache-control": "public, must-revalidate, max-age=30",
+    "content-encoding": "br",
+    "content-security-policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; font-src 'self'; worker-src 'self'; manifest-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'",
+    "content-type": "text/html",
+    "date": "Sat, 29 Aug 2026 04:48:12 GMT",
+    "etag": "\"98908126\"",
+    "last-modified": "Sat, 29 Aug 2026 04:30:49 GMT",
+    "referrer-policy": "strict-origin-when-cross-origin",
+    "strict-transport-security": "max-age=10886400; includeSubDomains; preload",
+    "vary": "Accept-Encoding",
+    "x-content-type-options": "nosniff",
+    "x-dns-prefetch-control": "off",
+    "x-frame-options": "DENY",
+    "x-xss-protection": "1; mode=block"
+  },
+  "viewportText": "Skip to drills\nSEED\n\nML drills\nDemo\nDrills\nPrivacy\n\nFIXED SEEDS / NO CHAT REQUIRED\n\nPractice reproducible ML models.\n\nFor self-taught learners who need one small model task and a check now.\n\nTry it with sample data Opens a seeded drill and local run record.\n\nFree. All 30 drills are open.\nRuns stay in this browser.\nWorks offline after your first visit.\nOne small trace at a time.\n\nTHE WORKBENCH\n\nChoose a concept-sized drill.\n\nEach drill uses a fixed seed, a toy dataset, and a small expected result.\n\nOpen the 30 drills\nEstimated 6–10 minutes each\nBuild the habit in three steps.\nPick a drill.\nStart with tensors, losses, or evaluation.\nWrite one line.\nUse the supplied tiny dataset and seed.\nSave the record.\nExport the run when the check passes.\nWhat this lab does not do.\n\nIt does not host models, rank people, or give generated solutions. Checks evaluate a supported answer line against fixed exercise data and replay a deterministic trace. It does not execute arbitrary Python or PyTorch.\n\nShort ML practice with fixed inputs.\n\nPrivacy · Terms · Built by Param Factory · v1.0.0 · build a6958b33c35a\n\nHero art is generated original artwork.",
+  "controls": [
+    {
+      "tag": "A",
+      "text": "Skip to drills",
+      "href": "https://promptless-ml-lab.sociobot.in/#main"
+    },
+    {
+      "tag": "A",
+      "text": "SEEDML drills",
+      "href": "https://promptless-ml-lab.sociobot.in/"
+    },
+    {
+      "tag": "A",
+      "text": "Demo",
+      "href": "https://promptless-ml-lab.sociobot.in/demo"
+    },
+    {
+      "tag": "A",
+      "text": "Drills",
+      "href": "https://promptless-ml-lab.sociobot.in/#catalog"
+    },
+    {
+      "tag": "A",
+      "text": "Privacy",
+      "href": "https://promptless-ml-lab.sociobot.in/privacy"
+    },
+    {
+      "tag": "A",
+      "text": "Try it with sample data",
+      "href": "https://promptless-ml-lab.sociobot.in/demo"
+    },
+    {
+      "tag": "A",
+      "text": "Open the 30 drills",
+      "href": "https://promptless-ml-lab.sociobot.in/demo"
+    },
+    {
+      "tag": "A",
+      "text": "Privacy",
+      "href": "https://promptless-ml-lab.sociobot.in/privacy"
+    },
+    {
+      "tag": "A",
+      "text": "Terms",
+      "href": "https://promptless-ml-lab.sociobot.in/terms"
+    }
+  ],
+  "headings": [
+    {
+      "tag": "H1",
+      "text": "Practice reproducible ML models."
+    },
+    {
+      "tag": "H2",
+      "text": "Choose a concept-sized drill."
+    },
+    {
+      "tag": "H2",
+      "text": "Build the habit in three steps."
+    },
+    {
+      "tag": "H2",
+      "text": "What this lab does not do."
+    }
+  ],
+  "requests": [
+    {
+      "method": "GET",
+      "url": "https://promptless-ml-lab.sociobot.in/",
+      "resourceType": "document"
+    },
+    {
+      "method": "GET",
+      "url": "https://promptless-ml-lab.sociobot.in/assets/index-DAfEsnH2.js",
+      "resourceType": "script"
+    },
+    {
+      "method": "GET",
+      "url": "https://promptless-ml-lab.sociobot.in/assets/index-DV39k8sQ.css",
+      "resourceType": "stylesheet"
+    },
+    {
+      "method": "GET",
+      "url": "https://promptless-ml-lab.sociobot.in/assets/concrete-moss-lab.webp",
+      "resourceType": "image"
+    }
+  ],
+  "consoleEvents": [
+    {
+      "type": "warning",
+      "text": "Service Worker registration blocked by Playwright"
+    }
+  ],
+  "pageErrors": []
+}
