@@ -732,6 +732,27 @@ test('@claim:deterministic-trace repeated checks export the same seven-point tra
   expect(runs[0].trace).toEqual(runs[1].trace);
 });
 
+test('@claim:sample-passed-trace the landing preview opens a seed-11 run that exports seven results from 0 to 1', async ({ page }) => {
+  await page.goto('/');
+  const preview = page.locator('.drill-preview');
+  await expect(preview.getByRole('heading', { name: 'Sample passed record' })).toBeVisible();
+  await expect(preview.getByText('Seven repeated results: 0 → 1')).toBeVisible();
+  await preview.getByRole('link', { name: 'Try this sample drill' }).click();
+  await expect(page).toHaveURL(/\/demo$/);
+  await expect(page.locator('.seed')).toHaveText(/SEED\s*11/);
+
+  const starter = await page.locator('#code').inputValue();
+  await page.locator('#code').fill(`${starter}\nx.shape`);
+  await page.getByRole('button', { name: 'Check my answer' }).click();
+  await expect(page.getByText('Passed. Saved a replayable record with seed 11.')).toBeVisible();
+
+  const [run] = await exportedRuns(page);
+  expect(run).toMatchObject({ drillId: 'tensor-shapes', seed: 11, pass: true });
+  expect(run.trace).toHaveLength(7);
+  expect(run.trace[0]).toBe(0);
+  expect(run.trace.at(-1)).toBe(1);
+});
+
 test('@claim:no-arbitrary-pytorch browser checks reject unsupported Python without executing it', async ({ page }) => {
   const pageErrors: Error[] = [];
   page.on('pageerror', (error) => pageErrors.push(error));

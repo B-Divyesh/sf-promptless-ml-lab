@@ -112,6 +112,13 @@
     "sandbox": "fresh demo; pass the first drill twice; export records and assert both seven-point traces are identical"
   },
   {
+    "id": "sample-passed-trace",
+    "claim": "The landing sample passed record has seven results from 0 to 1.",
+    "where": "landing sample passed-record preview",
+    "test": "npm test -- --grep @claim:sample-passed-trace",
+    "sandbox": "fresh landing; open the seed-11 sample from its preview; pass it; export its record and assert pass state, seven points, start 0, and end 1"
+  },
+  {
     "id": "no-arbitrary-pytorch",
     "claim": "The browser check does not execute arbitrary Python or PyTorch.",
     "where": "landing limitation, terms, README",
