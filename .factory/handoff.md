@@ -75,16 +75,29 @@ npm audit --omit=dev
 
 ## Deployment
 
-The release artifact remains a Vite static site in `dist/`. Deploy it with the
-work-order command:
+The release artifact remains a Vite static site in `dist/`. It was deployed
+through the work-order command:
 
 ```sh
 /opt/fleet/lib/deploy-static.sh promptless-ml-lab dist
 ```
 
-The production identity check is the footer's 12-character build id at
-`https://promptless-ml-lab.sociobot.in`, followed by the same URL verifier on
-`/`, `/demo`, and `/lab` and a live catalog-contract smoke test.
+- Azure Static Web Apps deployment
+  `1b40e78a-2b11-46ee-a852-f4e2c6c5ff81` succeeded in `centralus`; the custom
+  domain returned HTTP 200. The final documentation-only commit is rebuilt and
+  redeployed through the same configuration after this evidence is recorded.
+- Live `/`, `/demo`, and `/lab` passed `/opt/fleet/lib/verify-url.sh` with no
+  console/page errors at desktop and 390 × 844. Evidence is under
+  `.factory/qa-evidence/repair4-live*`.
+- The live footer reported build `43d356f42886` for the tested repair artifact,
+  and its main JavaScript SHA-256 matched `dist/` byte-for-byte.
+- Live standardization, gradient-step, and replay-seed intended answers passed;
+  the reported gradient constant and random replay shortcuts failed. The fresh
+  390 px context had no horizontal overflow, made only same-origin GETs, used
+  cache `seeded-ml-drills-v4`, and reloaded `/demo` offline.
+- Live `/does-not-exist` returned HTTP 404. The live policy returned HSTS,
+  `nosniff`, strict-origin referrer policy, CSP with `frame-ancestors 'none'`,
+  and `X-Frame-Options: DENY`.
 
 ## Known gaps
 
