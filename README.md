@@ -14,10 +14,10 @@ with seed 11. Its records use the separate `demo:seeded-ml-runs` local-storage
 key. **Reset demo** clears that key. Use **Start for real** to switch to the
 separate `real:seeded-ml-runs` key.
 
-The browser check recognizes the required PyTorch operation and replays the
-drill's fixed trace. It is deliberately transparent: it does not execute
-arbitrary Python or PyTorch. Use your own Python environment for production
-verification.
+The browser check evaluates a supported final answer line against each drill’s
+fixed exercise data and replays the drill's fixed trace. It is deliberately
+transparent: it does not execute arbitrary Python or PyTorch. Use your own
+Python environment for production verification.
 
 ## Develop
 
@@ -33,7 +33,8 @@ npm test
 npm run build
 ```
 
-`npm run build` writes the static deployment to `dist/`, with `index.html` at
+`npm ci` installs the pinned Azure Static Web Apps emulator used by the browser
+tests. `npm run build` writes the static deployment to `dist/`, with `index.html` at
 its root. The project uses no runtime third-party scripts, remote fonts, or
 analytics. The service worker caches the application shell after the first
 visit, so `/demo` can reload offline.

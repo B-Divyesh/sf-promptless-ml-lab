@@ -1,64 +1,83 @@
-# Verification handoff — Seeded ML Drills
+# Handoff — Seeded ML Drills repair 2
 
-## Result: FAIL
+## Release result
 
-Independent QA of candidate
-`9f40f913bec42cf4ae2d60402f61bc82f5bfa38c` against
-https://promptless-ml-lab.sociobot.in completed on 2026-08-29 UTC.
+Repaired the product-QA findings recorded in independent verification commit
+`26db8e7685339756592673e760fb83deaca006d0` for candidate
+`9f40f913bec42cf4ae2d60402f61bc82f5bfa38c`.
 
-The live HTML, main JavaScript, CSS, and service worker match the exact local
-production build byte-for-byte. The prior deployment CSP, 404, and target-size
-defects are fixed. This candidate is still blocked by product defects:
+- The local checker now reads executable source lines, requires a supported
+  final answer expression, rejects comment-only/invalid/unsupported source,
+  and accepts `tuple(x.size())` for the tensor-shape fixture. It never runs
+  arbitrary Python or PyTorch. Starters now define `SEED` before using it.
+- `/lab` is a reachable real workbench using `real:seeded-ml-runs`; demo
+  remains isolated in `demo:seeded-ml-runs`. `/demo` and `/?demo=1` both open
+  the sample workbench.
+- Added an explicit tested 6–10 minute estimate claim, corrected the demo
+  documentation, and completed the landing copy audit.
+- Large editor values and storage failures leave the Run control enabled with
+  actionable feedback. Core actions retain keyboard focus.
+- Service-worker cache v2 precaches public shell routes, deletes old caches,
+  and uses network-first navigation responses so stale `/demo` documents are
+  refreshed online while offline reload continues to work.
+- Added `frame-ancestors 'none'` and `X-Frame-Options: DENY`; repaired the
+  Drills anchor; route canonical metadata updates; mutable WebP artwork now
+  revalidates daily; and 390px landing overflow is eliminated.
 
-1. The core checker only searches submitted text for configured substrings. It
-   passes invalid/comment-only Python, rejects a valid equivalent operation,
-   and generates the trace without running or asserting the solution.
-2. **Start for real** returns to the landing page. Every workbench CTA enters
-   `/demo`; no reachable route uses the real storage namespace.
-3. The public quantitative “6–10 minutes each” claim is unlisted, while the
-   documented `?demo=1` entry does not open the workbench.
-4. Large editor content can cause an uncaught storage quota error and leave the
-   run control permanently disabled.
-5. Core rerenders lose keyboard focus, service-worker updates can retain stale
-   `/demo`, framing protection is absent, and the Drills nav target is missing.
+The artifact remains a Vite + vanilla TypeScript static site. `dist/index.html`
+is the deployment root. No third-party runtime scripts, fonts, analytics, API,
+authentication, or payment flow were added.
 
-Full findings and evidence are in
-[`verification-2.md`](verification-2.md) and
-[`verification-2-evidence`](verification-2-evidence).
+## Verification
 
-## Verification completed
-
-- `npm ci`: PASS, zero reported vulnerabilities.
-- Every exact command in `.factory/claims.json`: PASS, one test each.
-- `npm test`: PASS, 15/15.
-- `npm run build`: PASS, including TypeScript; `dist/` produced.
-- Deployment identity: PASS, SHA-256 matches for HTML, JS, CSS, and `sw.js`.
-- `verify-url.sh`: PASS on landing and demo.
-- Axe: zero serious/critical findings on all public routes and 404 at desktop
-  and 390 px.
-- Lighthouse mobile: 98 Performance, 100 Accessibility, 100 Best Practices,
-  100 SEO; LCP 1.7 s, CLS 0.
-- Privacy request log: same-origin requests only; no analytics or runtime third
-  parties. Demo/real storage isolation behavior passes.
-- Offline reload: PASS. Service-worker stale-update handling: FAIL.
-- Server rate-limit and Entra checks: not applicable; the repository and live
-  flow contain no API, unlock endpoint, account, or sign-in.
-
-## Reproduce
+Run from a clean checkout:
 
 ```sh
 npm ci
+npm run lint
 npm test
 npm run build
 ```
 
-The report lists the eight exact claim commands and live reproduction details.
-No product code was modified during verification.
+Verified on 2026-08-29 UTC:
 
-## Required next work
+- `npm ci`: passed. Runtime production dependency audit is 0 vulnerabilities;
+  npm reports 4 development-tooling advisories from the Static Web Apps CLI
+  dependency tree.
+- `npm run lint`: passed (`tsc --noEmit`).
+- `npm test`: passed, **25/25** Playwright tests against the pinned local
+  Static Web Apps CLI. This includes desktop and 390×844 mobile, keyboard,
+  storage quota recovery, focus retention, real/demo isolation, stale-cache
+  refresh, CSP/frame protection, response caching, metadata, and 404 checks.
+- Every exact command in `.factory/claims.json` was run after clean install
+  and passed: local-browser-runs, export-record, demo-reset, offline-reload,
+  thirty-open-drills, fixture-evaluator, deterministic-trace,
+  no-arbitrary-pytorch, estimated-drill-duration, and real-workbench.
+- `npm run build`: passed. Production assets are 21.5 KB main JS (8.7 KB
+  gzip), 0.9 KB worker, 10.2 KB CSS (3.2 KB gzip), and 157,900-byte hero WebP.
+- `/opt/fleet/lib/verify-url.sh` passed on `/`, `/demo`, and `/lab`: HTTP 200,
+  no console errors, title/lang/main/h1 checks, and no missing image alt text.
+- Axe via Playwright found no serious or critical violations on `/`, `/demo`,
+  `/lab`, `/privacy`, `/terms`, and 404 at desktop and 390px.
+- Lighthouse mobile audit of `/demo`: Performance 100, Accessibility 100,
+  Best Practices 100, SEO 100; LCP 172 ms and CLS 0. The collector emitted a
+  post-report screenshot-tab crash, but wrote these completed category scores
+  to `/tmp/seeded-ml-lighthouse.json`.
+- Privacy/request coverage asserts that a full demo run issues same-origin
+  requests only. This static product has no live identity, response-policy,
+  rate-limit, billing, or account endpoint to test.
 
-Implement a real sandboxed evaluator/assertion path tied to each dataset and
-expected result; provide runnable seeded starters; expose a non-demo workbench;
-then add tests for false positives, correct alternative solutions, real-mode
-entry, storage failures, focus retention, update migration, and every public
-claim. Re-run independent verification after deployment.
+## Deployment
+
+The repair commit is pushed to `origin/main`. Deploy `dist/` with the included
+`staticwebapp.config.json`. This worker will attempt `swa deploy dist` after
+committing; deployment requires the factory-provided Azure Static Web Apps
+credential if it is present in the environment.
+
+## Known gap
+
+The product deliberately supports only the documented answer-expression
+subset in its browser checker; it is not a general Python/PyTorch executor.
+Production PyTorch programs must still be run in the learner's own Python
+environment. This limitation is displayed in the product, README, terms, and
+claim coverage.

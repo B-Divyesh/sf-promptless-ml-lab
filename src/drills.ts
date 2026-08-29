@@ -1,13 +1,13 @@
 export type Drill = {
   id: string; title: string; track: string; minutes: number; seed: number;
-  goal: string; dataset: string; task: string; expected: string; needles: string[];
+  goal: string; dataset: string; task: string; expected: string; answers: string[];
   starter: string; metric: string; start: number; end: number;
 };
 
-const starter = (body: string) => `# Seeded ML Drills — edit only the TODO line\nimport torch\ntorch.manual_seed(SEED)\n\n${body}\n# TODO: write one line below\n`;
+const starter = (body: string) => `# Seeded ML Drills — edit only the TODO line\nimport torch\nSEED = __SEED__\ntorch.manual_seed(SEED)\n\n${body}\n# TODO: write one line below\n`;
 
 export const drills: Drill[] = [
-  ['tensor-shapes','Read tensor shapes','Tensor basics',6,11,'Find the batch and feature dimensions.','8 samples × 3 features','Return the shape of x.','(8, 3)',['x.shape','shape'],starter('x = torch.tensor([[0.1, 0.2, 0.3]] * 8)'),'shape',0,1],
+  ['tensor-shapes','Read tensor shapes','Tensor basics',6,11,'Find the batch and feature dimensions.','8 samples × 3 features','Return the shape of x.','(8, 3)',['x.shape','tuple(x.size())','x.size()'],starter('x = torch.tensor([[0.1, 0.2, 0.3]] * 8)'),'shape',0,1],
   ['broadcast-bias','Add a broadcast bias','Tensor basics',7,23,'Use a vector bias across a batch.','4 samples × 2 features','Add bias to x without a loop.','[[1.25, -0.5], ...]',['x + bias','x+bias'],starter('x = torch.tensor([[1.0, -1.0]] * 4)\nbias = torch.tensor([0.25, 0.5])'),'mean',0.12,0.75],
   ['seeded-shuffle','Shuffle with a seed','Tensor basics',6,41,'Make the same shuffled order twice.','12 row index set','Create a seeded permutation.','[10, 2, 0, 7, ...]',['torch.randperm','manual_seed'],starter('SEED = 41\nrows = torch.arange(12)'),'first index',0,10],
   ['split-indices','Make train and validation splits','Data handling',8,7,'Keep rows apart while preserving a fixed split.','20 labeled points','Select the first 16 shuffled rows for training.','16 train / 4 validation rows',['perm[:16]','permutation[:16]'],starter('SEED = 7\nperm = torch.randperm(20)'),'train rows',0,16],
@@ -37,6 +37,6 @@ export const drills: Drill[] = [
   ['pca-center','Center data before PCA','Classical ML',7,137,'Remove the mean before finding directions.','6 points × 2 features','Subtract the column mean.','column means = 0',['x - x.mean(dim=0)','x-x.mean(dim=0)'],starter('x = torch.tensor([[1.,2.],[2.,3.],[3.,4.],[4.,5.],[5.,6.],[6.,7.]])'),'mean',3.5,0],
   ['replay-seed','Replay a run from its seed','Reproducibility',6,149,'Prove a result can be made again.','Seeded XOR data','Set the documented seed.','same trace twice',['torch.manual_seed(SEED)','manual_seed(SEED)'],starter('SEED = 149'),'trace difference',1,0],
   ['save-config','Record training settings','Reproducibility',6,151,'Keep the settings needed to repeat a run.','Seed, learning rate, epochs','Create a config dictionary.','three saved fields',['{"seed": SEED','{"seed":SEED','dict(seed=SEED)'],starter('SEED = 151\nlr = 0.03\nepochs = 8'),'saved fields',0,3]
-].map(([id,title,track,minutes,seed,goal,dataset,task,expected,needles,starter,metric,start,end]) => ({ id,title,track,minutes,seed,goal,dataset,task,expected,needles,starter,metric,start,end } as Drill));
+].map(([id,title,track,minutes,seed,goal,dataset,task,expected,answers,starter,metric,start,end]) => ({ id,title,track,minutes,seed,goal,dataset,task,expected,answers,starter: (starter as string).replace('__SEED__', String(seed)),metric,start,end } as Drill));
 
 export const tracks = [...new Set(drills.map((drill) => drill.track))];

@@ -35,11 +35,11 @@
     "sandbox": "fresh demo; assert the drill catalog contains exactly 30 drill controls"
   },
   {
-    "id": "checker-recognizes-operation",
-    "claim": "The browser check recognizes the required operation.",
+    "id": "fixture-evaluator",
+    "claim": "The browser check evaluates a supported answer line against fixed exercise data.",
     "where": "landing limitation, README",
-    "test": "npm test -- --grep @claim:checker-recognizes-operation",
-    "sandbox": "fresh demo; submit code without the tensor-shape operation and observe Not yet; submit x.shape and observe Passed"
+    "test": "npm test -- --grep @claim:fixture-evaluator",
+    "sandbox": "fresh demo; submit comment-only invalid source and observe Not yet; submit tuple(x.size()) against the fixed shape fixture and observe Passed"
   },
   {
     "id": "deterministic-trace",
@@ -53,6 +53,20 @@
     "claim": "The browser check does not execute arbitrary Python or PyTorch.",
     "where": "landing limitation, terms, README",
     "test": "npm test -- --grep @claim:no-arbitrary-pytorch",
-    "sandbox": "fresh demo; submit a Python raise statement plus the required operation; assert the check passes and the browser raises no execution error"
+    "sandbox": "fresh demo; submit a Python raise statement plus the required operation; assert it is rejected and the browser raises no execution error"
+  },
+  {
+    "id": "estimated-drill-duration",
+    "claim": "Each drill has a 6–10 minute estimate.",
+    "where": "landing catalog callout, drill catalog",
+    "test": "npm test -- --grep @claim:estimated-drill-duration",
+    "sandbox": "fresh demo; assert all 30 displayed drill estimates are between 6 and 10 minutes"
+  },
+  {
+    "id": "real-workbench",
+    "claim": "Start for real opens a separate real workbench.",
+    "where": "demo banner, demo documentation, README",
+    "test": "npm test -- --grep @claim:real-workbench",
+    "sandbox": "fresh demo; select Start for real; pass one drill; assert the real key is written and the demo key is untouched"
   }
 ]
