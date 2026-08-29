@@ -91,7 +91,7 @@ test('keyboard flow handles invalid boundaries, recovers, exports, replays and r
   await page.locator('#code').fill(`${starter}\nx.shape`);
   await page.getByRole('button', { name: 'Check my answer' }).click();
   await expect(page.locator('#result')).toContainText('Passed. Saved a replayable record with seed 11.');
-  const record = await page.evaluate(() => JSON.parse(localStorage.getItem('demo:seeded-ml-runs') || '[]')[0]);
+  const record = await page.evaluate(() => JSON.parse(sessionStorage.getItem('demo:seeded-ml-runs') || '[]')[0]);
   expect(record).toMatchObject({ drillId: 'tensor-shapes', seed: 11, pass: true, version: 1 });
   expect(record.trace).toHaveLength(7);
   expect(await page.evaluate(() => localStorage.getItem('real:seeded-ml-runs'))).toBe('real-sentinel');
@@ -107,7 +107,7 @@ test('keyboard flow handles invalid boundaries, recovers, exports, replays and r
   await page.getByRole('button', { name: 'Replay', exact: true }).first().click();
   await expect(page.locator('#result')).toContainText('Replay checked the saved source: passed with seed 11.');
   await page.getByRole('button', { name: 'Reset demo' }).click();
-  expect(await page.evaluate(() => localStorage.getItem('demo:seeded-ml-runs'))).toBeNull();
+  expect(await page.evaluate(() => sessionStorage.getItem('demo:seeded-ml-runs'))).toBeNull();
   expect(await page.evaluate(() => localStorage.getItem('real:seeded-ml-runs'))).toBe('real-sentinel');
   expect(requests.every(request => request.method === 'GET' && new URL(request.url).origin === origin)).toBeTruthy();
   expect(requests.some(request => JSON.stringify(request).includes('UNIQUE_PRIVACY_MARKER_11'))).toBeFalsy();
@@ -136,7 +136,7 @@ test('import rejects malformed, oversized and duplicate records with recovery an
   await expect(page.getByText('1 record is ready to import.')).toBeVisible();
   await page.getByRole('button', { name: 'Cancel import' }).click();
   await expect(page.getByText('Import canceled. No records changed.')).toBeVisible();
-  expect(await page.evaluate(() => localStorage.getItem('demo:seeded-ml-runs'))).toBeNull();
+  expect(await page.evaluate(() => sessionStorage.getItem('demo:seeded-ml-runs'))).toBeNull();
   await choose(valid);
   await page.getByRole('button', { name: 'Import 1 record' }).click();
   await expect(page.getByText('Imported 1 run record into this demo workbench.')).toBeVisible();
@@ -147,7 +147,7 @@ test('import rejects malformed, oversized and duplicate records with recovery an
   await expect(page.getByText('Nothing was imported. Remove duplicate run records and choose the file again.')).toBeVisible();
   await page.getByRole('link', { name: 'Open your real workbench' }).click();
   await expect(page).toHaveURL(`${origin}/lab`);
-  expect(await page.evaluate(() => localStorage.getItem('demo:seeded-ml-runs'))).toBeNull();
+  expect(await page.evaluate(() => sessionStorage.getItem('demo:seeded-ml-runs'))).toBeNull();
   await page.locator('#code').fill(`${starter}\nx.shape`);
   await page.getByRole('button', { name: 'Check my answer' }).click();
   await expect(page.locator('#result')).toContainText('Passed.');
@@ -256,7 +256,7 @@ test('headers, cache policy, build identity, service-worker update and offline r
     return { active: registration.active?.state, waiting: Boolean(registration.waiting), installing: Boolean(registration.installing), controlled: Boolean(navigator.serviceWorker.controller), caches: await caches.keys() };
   });
   expect(state).toMatchObject({ active: 'activated', waiting: false, installing: false, controlled: true });
-  expect(state.caches).toContain('seeded-ml-drills-v6');
+  expect(state.caches).toContain('seeded-ml-drills-v7');
   await page.goto('/demo');
   const starter = await page.locator('#code').inputValue();
   await page.locator('#code').fill(`${starter}\nx.shape`);

@@ -10,9 +10,10 @@ exportable local run records.
 ## Try the sample
 
 Open `/demo` after starting the app. The demo opens a tensor-shape drill with
-fixed sample inputs and seed 11. Its records use the separate `demo:seeded-ml-runs` local-storage
-key. **Reset demo** clears that key. **Open your real workbench** discards demo
-records, then switches to the separate `real:seeded-ml-runs` key.
+fixed sample inputs and seed 11. Its records use the separate session-storage
+key `demo:seeded-ml-runs`. Leaving demo or selecting **Reset demo** clears that
+key. **Open your real workbench** discards demo records, then switches to the
+separate `real:seeded-ml-runs` local-storage key.
 
 The browser checks one answer line against each drill's fixed inputs. An answer
 must use the operation named by the drill and produce the expected value. It

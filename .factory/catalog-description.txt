@@ -1,1 +1,1 @@
-Practice PyTorch operations through 30 fixed drills with browser checks.
+Practice 30 fixed PyTorch operations with browser checks.

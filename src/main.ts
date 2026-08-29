@@ -10,8 +10,21 @@ routeStatus.setAttribute('role', 'status');
 routeStatus.setAttribute('aria-live', 'polite');
 routeStatus.setAttribute('aria-atomic', 'true');
 document.body.insertBefore(routeStatus, root);
-const isDemo = () => location.pathname === '/demo' || new URLSearchParams(location.search).get('demo') === '1';
-const key = () => `${isDemo() ? 'demo:' : 'real:'}seeded-ml-runs`;
+const DEMO_RUNS_KEY = 'demo:seeded-ml-runs';
+const REAL_RUNS_KEY = 'real:seeded-ml-runs';
+const isDemoRoute = (path = location.pathname, search = location.search) => path === '/demo' || new URLSearchParams(search).get('demo') === '1';
+const isDemo = () => isDemoRoute();
+const runStorage = () => isDemo() ? sessionStorage : localStorage;
+const key = () => isDemo() ? DEMO_RUNS_KEY : REAL_RUNS_KEY;
+// Demo records are intentionally session-scoped. The cleanup helper also
+// removes the old local-storage key left by releases before the sandbox rule.
+function discardDemoRecords() {
+  try { sessionStorage.removeItem(DEMO_RUNS_KEY); } catch { /* Storage can be unavailable. */ }
+  removeLegacyDemoRecords();
+}
+function removeLegacyDemoRecords() {
+  try { localStorage.removeItem(DEMO_RUNS_KEY); } catch { /* Remove legacy demo data when possible. */ }
+}
 const isRun = (value: unknown): value is Run => {
   if (!value || typeof value !== 'object') return false;
   const run = value as Partial<Run>;
@@ -23,8 +36,8 @@ const isRun = (value: unknown): value is Run => {
     && Array.isArray(run.trace) && run.trace.length === 7
     && run.trace.every((point) => typeof point === 'number' && Number.isFinite(point));
 };
-const getRuns = (): Run[] => { try { const value: unknown = JSON.parse(localStorage.getItem(key()) || '[]'); return Array.isArray(value) ? value.filter(isRun) : []; } catch { return []; } };
-const saveRuns = (runs: Run[]) => { try { localStorage.setItem(key(), JSON.stringify(runs)); return true; } catch { return false; } };
+const getRuns = (): Run[] => { try { const value: unknown = JSON.parse(runStorage().getItem(key()) || '[]'); return Array.isArray(value) ? value.filter(isRun) : []; } catch { return []; } };
+const saveRuns = (runs: Run[]) => { try { runStorage().setItem(key(), JSON.stringify(runs)); return true; } catch { return false; } };
 const escape = (s: string) => s.replace(/[&<>"']/g, (c) => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]!));
 let active = drills[0]; let selectedTrack = 'All'; let lastRun: Run | null = null;
 let pendingImport: Run[] | null = null;
@@ -50,7 +63,7 @@ function setMetadata() {
 }
 function header() { return `<a class="skip" href="#main">Skip to drills</a><header><a class="wordmark" href="/" data-route>SEED<br><i>ML drills</i></a><nav aria-label="Main navigation"><a href="/demo" data-route>Demo</a><a href="/#catalog" data-route>Drills</a><a href="/privacy" data-route>Privacy</a></nav></header>`; }
 function footer() { return `<footer><p>Short ML practice with fixed inputs.</p><p><a href="/privacy" data-route>Privacy</a> · <a href="/terms" data-route>Terms</a> · Built by Param Factory · v1.0.0 · build ${escape(__BUILD_ID__.slice(0, 12))}</p></footer>`; }
-function demoBanner() { return isDemo() ? `<aside class="demo-banner" aria-label="Demo mode"><strong>Demo — sample data, nothing is saved.</strong><button class="text-button" id="reset-demo">Reset demo</button><a href="/lab" data-route data-exit-demo>Open your real workbench</a></aside>` : ''; }
+function demoBanner() { return isDemo() ? `<aside class="demo-banner" aria-label="Demo mode"><strong>Demo — sample data, nothing is saved.</strong><button class="text-button" id="reset-demo">Reset demo</button><a href="/lab" data-route>Open your real workbench</a></aside>` : ''; }
 function renderLanding() {
   setMetadata();
   root.innerHTML = `${header()}${demoBanner()}<main id="main" tabindex="-1">
@@ -135,12 +148,21 @@ function readImport(text: string) {
     importNotice = 'Nothing was imported. Choose an exported Seeded ML Drills JSON file.';
   }
 }
-function renderStatic(page: 'privacy'|'terms') { const content = page === 'privacy' ? `<h1>Your practice stays in this browser.</h1><p>Seeded ML Drills stores run records in your browser’s local storage. It does not send your code, run records, or identity to a server.</p><h2>Demo mode</h2><p>Demo records use a separate <code>demo:</code> storage key. Reset demo removes those records. Opening your real workbench never reads demo records.</p><h2>Offline files</h2><p>After the first visit, the service worker saves the files needed to reopen the drills offline.</p>` : `<h1>Use the drills freely.</h1><p>Seeded ML Drills is a free practice tool. The drills and local records are provided as-is for learning.</p><h2>Your code</h2><p>You keep your code. Nothing in this version uploads it.</p><h2>Drill limitations</h2><p>The browser checks one answer line against each drill’s fixed inputs. It does not execute arbitrary Python or PyTorch. Verify production work in your own Python environment.</p>`;
+function renderStatic(page: 'privacy'|'terms') { const content = page === 'privacy' ? `<h1>Your practice stays in this browser.</h1><p>Seeded ML Drills stores real run records in your browser’s local storage. It does not send your code, run records, or identity to a server.</p><h2>Demo mode</h2><p>Demo records use separate session storage. Leaving demo mode or selecting Reset demo removes them. Opening your real workbench never reads demo records.</p><h2>Offline files</h2><p>After the first visit, the service worker saves the files needed to reopen the drills offline.</p>` : `<h1>Use the drills freely.</h1><p>Seeded ML Drills is a free practice tool. The drills and local records are provided as-is for learning.</p><h2>Your code</h2><p>You keep your code. Nothing in this version uploads it.</p><h2>Drill limitations</h2><p>The browser checks one answer line against each drill’s fixed inputs. It does not execute arbitrary Python or PyTorch. Verify production work in your own Python environment.</p>`;
   setMetadata(); root.innerHTML = `${header()}<main id="main" tabindex="-1" class="legal"><p class="eyebrow">SEED / ML DRILLS</p>${content}<p><a class="button" href="/demo" data-route>Try a sample drill</a></p></main>${footer()}`;
 }
-function route(path = location.pathname, moveFocus = false) { if (path === '/privacy') renderStatic('privacy'); else if (path === '/terms') renderStatic('terms'); else if (path === '/demo' || path === '/lab' || isDemo()) renderLab(); else renderLanding(); requestAnimationFrame(() => { if (location.hash) document.querySelector(location.hash)?.scrollIntoView(); if (moveFocus) { const heading = document.querySelector<HTMLElement>('h1'); heading?.setAttribute('tabindex', '-1'); heading?.focus({ preventScroll: true }); routeStatus.textContent = `${document.title}. ${heading?.textContent || ''}`; } }); }
+let previousRouteWasDemo = isDemo();
+// All in-product route changes flow through here, including popstate. This is
+// the single exit boundary for the sample sandbox.
+function reconcileDemoRoute(nextRouteIsDemo: boolean) {
+  if (previousRouteWasDemo && !nextRouteIsDemo) discardDemoRecords();
+  if (nextRouteIsDemo) removeLegacyDemoRecords();
+  previousRouteWasDemo = nextRouteIsDemo;
+}
+removeLegacyDemoRecords();
+function route(path = location.pathname, moveFocus = false) { const nextRouteIsDemo = isDemoRoute(path); reconcileDemoRoute(nextRouteIsDemo); if (path === '/privacy') renderStatic('privacy'); else if (path === '/terms') renderStatic('terms'); else if (path === '/demo' || path === '/lab' || nextRouteIsDemo) renderLab(); else renderLanding(); requestAnimationFrame(() => { if (location.hash) document.querySelector(location.hash)?.scrollIntoView(); if (moveFocus) { const heading = document.querySelector<HTMLElement>('h1'); heading?.setAttribute('tabindex', '-1'); heading?.focus({ preventScroll: true }); routeStatus.textContent = `${document.title}. ${heading?.textContent || ''}`; } }); }
 function navigate(href: string) { history.pushState({}, '', href); route(location.pathname, true); }
-document.addEventListener('click', (event) => { const target = event.target as HTMLElement; const anchor = target.closest<HTMLAnchorElement>('a[data-route]'); if (anchor) { event.preventDefault(); if (anchor.hasAttribute('data-exit-demo')) localStorage.removeItem('demo:seeded-ml-runs'); pendingImport = null; importNotice = ''; navigate(anchor.href); return; } const button = target.closest<HTMLButtonElement>('button'); if (!button) return; if (button.dataset.drill) { active = drills.find((d) => d.id === button.dataset.drill)!; lastRun = null; renderLab('drill'); } if (button.id === 'run') check(); if (button.id === 'restore') { lastRun = null; const code = document.querySelector<HTMLTextAreaElement>('#code')!; code.value = active.starter; code.focus(); } if (button.id === 'choose-import') document.querySelector<HTMLInputElement>('#import-records')?.click(); if (button.id === 'export-records') download(); if (button.id === 'confirm-import' && pendingImport) { const records = pendingImport; if (saveRuns([...records, ...getRuns()])) { pendingImport = null; importNotice = `Imported ${records.length} ${records.length === 1 ? 'run record' : 'run records'} into this ${isDemo() ? 'demo' : 'real'} workbench.`; lastRun = records[0]; active = drills.find(({ id }) => id === records[0].drillId)!; renderLab('record-heading'); } else { importNotice = 'The browser could not save these records. Free some browser storage, then try again.'; renderLab('confirm-import'); } } if (button.id === 'cancel-import') { pendingImport = null; importNotice = 'Import canceled. No records changed.'; renderLab('choose-import'); } if (button.id === 'reset-demo') { localStorage.removeItem('demo:seeded-ml-runs'); lastRun = null; pendingImport = null; importNotice = ''; renderLab('reset-demo'); } if (button.dataset.replay) { const run = getRuns().find((r) => r.id === button.dataset.replay); if (run) { active = drills.find((d) => d.id === run.drillId)!; lastRun = run; renderLab('run'); requestAnimationFrame(() => check(run.code, true)); } } });
+document.addEventListener('click', (event) => { const target = event.target as HTMLElement; const anchor = target.closest<HTMLAnchorElement>('a[data-route]'); if (anchor) { event.preventDefault(); pendingImport = null; importNotice = ''; navigate(anchor.href); return; } const button = target.closest<HTMLButtonElement>('button'); if (!button) return; if (button.dataset.drill) { active = drills.find((d) => d.id === button.dataset.drill)!; lastRun = null; renderLab('drill'); } if (button.id === 'run') check(); if (button.id === 'restore') { lastRun = null; const code = document.querySelector<HTMLTextAreaElement>('#code')!; code.value = active.starter; code.focus(); } if (button.id === 'choose-import') document.querySelector<HTMLInputElement>('#import-records')?.click(); if (button.id === 'export-records') download(); if (button.id === 'confirm-import' && pendingImport) { const records = pendingImport; if (saveRuns([...records, ...getRuns()])) { pendingImport = null; importNotice = `Imported ${records.length} ${records.length === 1 ? 'run record' : 'run records'} into this ${isDemo() ? 'demo' : 'real'} workbench.`; lastRun = records[0]; active = drills.find(({ id }) => id === records[0].drillId)!; renderLab('record-heading'); } else { importNotice = 'The browser could not save these records. Free some browser storage, then try again.'; renderLab('confirm-import'); } } if (button.id === 'cancel-import') { pendingImport = null; importNotice = 'Import canceled. No records changed.'; renderLab('choose-import'); } if (button.id === 'reset-demo') { discardDemoRecords(); lastRun = null; pendingImport = null; importNotice = ''; renderLab('reset-demo'); } if (button.dataset.replay) { const run = getRuns().find((r) => r.id === button.dataset.replay); if (run) { active = drills.find((d) => d.id === run.drillId)!; lastRun = run; renderLab('run'); requestAnimationFrame(() => check(run.code, true)); } } });
 document.addEventListener('change', async (event) => { const control = event.target as HTMLInputElement | HTMLSelectElement; if (control.id === 'track') { selectedTrack = control.value; renderLab('track'); } if (control.id === 'import-records' && control instanceof HTMLInputElement) { const file = control.files?.[0]; if (!file) return; if (file.size > 2_000_000) { pendingImport = null; importNotice = 'Nothing was imported. Choose a JSON file smaller than 2 MB.'; renderLab('choose-import'); return; } readImport(await file.text()); renderLab(pendingImport ? 'confirm-import' : 'choose-import'); } });
 window.addEventListener('popstate', () => route(location.pathname, true)); window.addEventListener('online', () => route()); window.addEventListener('offline', () => route());
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(() => undefined);

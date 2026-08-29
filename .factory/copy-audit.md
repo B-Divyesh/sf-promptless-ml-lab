@@ -1,4 +1,4 @@
-# Copy audit — polish round 5
+# Copy audit — polish round 6
 
 Counts treat hyphenated terms, paths, and version strings as one word. No
 visitor-facing unit exceeds 22 words or uses a banned marketing word.
@@ -98,7 +98,7 @@ are fully visible before scrolling.
 
 | Copy unit | Words | Characters | Flag |
 |---|---:|---:|---|
-| Practice PyTorch operations through 30 fixed drills with browser checks. | 10 | 72 | — |
+| Practice 30 fixed PyTorch operations with browser checks. | 8 | 56 | — |
 
 It begins with a verb and stays below the 120-character limit.
 
@@ -113,3 +113,11 @@ It begins with a verb and stays below the 120-character limit.
 | Seven repeated metric values | results |
 | Sample-only mode | demo |
 | Personal, non-demo workspace | real workbench |
+
+## Demo storage update
+
+The demo banner remains the short, testable promise “Demo — sample data,
+nothing is saved.” Privacy and README copy now say that demo records use
+session storage and are removed by Reset or when the visitor leaves demo mode.
+Each sentence is 22 words or fewer. `@claim:demo-reset` covers Home, Privacy,
+browser Back, the real-workbench exit, re-entry, and Reset.

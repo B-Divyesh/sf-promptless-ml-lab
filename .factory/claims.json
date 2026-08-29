@@ -37,9 +37,9 @@
   {
     "id": "demo-reset",
     "claim": "Demo — sample data, nothing is saved.",
-    "where": "demo banner",
+    "where": "demo banner, privacy page, README Try the sample, demo documentation",
     "test": "npm test -- --grep @claim:demo-reset",
-    "sandbox": "fresh demo; create a run; reset demo; assert only demo storage is removed and real storage remains untouched"
+    "sandbox": "fresh demo with a real-workbench sentinel; create a run and leave through Home, Privacy, browser Back, and Open your real workbench in separate flows; after every exit assert sessionStorage and legacy localStorage demo keys are absent, the real key is unchanged, and re-entering demo is empty; also assert Reset demo clears the same isolated key"
   },
   {
     "id": "one-click-sample",

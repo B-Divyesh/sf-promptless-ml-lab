@@ -8,12 +8,12 @@ The browser checker checks the named PyTorch operation and its result against
 each drill's fixed inputs. The tests submit one intended answer and one
 unrelated shortcut for every drill.
 
-Demo run records are stored only under `demo:seeded-ml-runs` in browser local
-storage. Real mode uses `real:seeded-ml-runs`; demo never reads or writes that
-key. **Reset demo** removes the demo key. **Open your real workbench** discards
-the demo key before routing to `/lab`, the real workbench, and changes storage
-namespaces. After the first visit, the service worker saves the files needed to
-reopen the demo offline.
+Demo run records are stored only under `demo:seeded-ml-runs` in browser session
+storage. Real mode uses the `real:seeded-ml-runs` local-storage key; demo never
+reads or writes that key. **Reset demo** removes the demo key. Every in-product
+exit from demo removes the demo key, including Home, Privacy, browser Back, and
+**Open your real workbench**. After the first visit, the service worker saves
+the files needed to reopen the demo offline.
 
 Exported JSON can be imported after a format check and record-count preview.
 Malformed and duplicate records are rejected. An import in demo mode writes

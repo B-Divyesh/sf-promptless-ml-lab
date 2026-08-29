@@ -94,6 +94,18 @@ async function passFirstDrill(page: import('@playwright/test').Page) {
   await expect(page.getByText('Passed. Saved a replayable record with seed 11.')).toBeVisible();
 }
 
+async function demoRecordValue(page: import('@playwright/test').Page) {
+  return page.evaluate(() => sessionStorage.getItem('demo:seeded-ml-runs'));
+}
+
+async function demoStorageState(page: import('@playwright/test').Page) {
+  return page.evaluate(() => ({
+    demo: sessionStorage.getItem('demo:seeded-ml-runs'),
+    legacyDemo: localStorage.getItem('demo:seeded-ml-runs'),
+    real: localStorage.getItem('real:seeded-ml-runs')
+  }));
+}
+
 async function exportedRuns(page: import('@playwright/test').Page) {
   const download = page.waitForEvent('download');
   await page.getByRole('button', { name: 'Export run records' }).click();
@@ -152,14 +164,49 @@ test('@claim:export-record records export seed and trace', async ({ page }) => {
   expect(runs[0].trace).toHaveLength(7);
 });
 
-test('@claim:demo-reset reset only clears demo records', async ({ page }) => {
+test('@claim:demo-reset demo records are discarded on reset and every ordinary exit', async ({ page }) => {
+  const realSentinel = 'real-sentinel';
+  await page.goto('/');
+  await page.evaluate((sentinel) => localStorage.setItem('real:seeded-ml-runs', sentinel), realSentinel);
+
+  async function expectEmptyDemoAfterExit() {
+    const storage = await demoStorageState(page);
+    expect(storage.demo).toBeNull();
+    expect(storage.legacyDemo).toBeNull();
+    expect(storage.real).toBe(realSentinel);
+    await page.goto('/demo');
+    await expect(page.getByText('No records yet. Pass a check or import records to add one here.')).toBeVisible();
+    expect(await demoRecordValue(page)).toBeNull();
+  }
+
   await page.goto('/demo');
-  await page.evaluate(() => localStorage.setItem('real:seeded-ml-runs', 'real-sentinel'));
+  await passFirstDrill(page);
+  expect(await demoRecordValue(page)).not.toBeNull();
+  await page.getByRole('link', { name: 'SEED ML drills' }).click();
+  await expect(page).toHaveURL(/\/$/);
+  await expectEmptyDemoAfterExit();
+
+  await passFirstDrill(page);
+  await page.getByRole('link', { name: 'Privacy', exact: true }).first().click();
+  await expect(page).toHaveURL(/\/privacy$/);
+  await expectEmptyDemoAfterExit();
+
+  await page.goto('/');
+  await page.getByRole('link', { name: 'Try it with sample data' }).click();
+  await passFirstDrill(page);
+  await page.goBack();
+  await expect(page).toHaveURL(/\/$/);
+  await expectEmptyDemoAfterExit();
+
+  await passFirstDrill(page);
+  await page.getByRole('link', { name: 'Open your real workbench' }).click();
+  await expect(page).toHaveURL(/\/lab$/);
+  await expectEmptyDemoAfterExit();
+
   await passFirstDrill(page);
   await page.getByRole('button', { name: 'Reset demo' }).click();
   await expect(page.getByText('No records yet. Pass a check or import records to add one here.')).toBeVisible();
-  expect(await page.evaluate(() => localStorage.getItem('demo:seeded-ml-runs'))).toBeNull();
-  expect(await page.evaluate(() => localStorage.getItem('real:seeded-ml-runs'))).toBe('real-sentinel');
+  await expectEmptyDemoAfterExit();
 });
 
 test('@claim:one-click-sample landing opens a populated isolated demo before any answer is checked', async ({ page }) => {
@@ -179,17 +226,17 @@ test('@claim:one-click-sample landing opens a populated isolated demo before any
     expect(box).not.toBeNull();
     expect(box!.y + Math.min(box!.height, 1), 'sample content should intersect the first mobile viewport').toBeLessThanOrEqual(844);
   }
-  expect(await page.evaluate(() => localStorage.getItem('demo:seeded-ml-runs'))).toBeNull();
+  expect(await demoRecordValue(page)).toBeNull();
   expect(await page.evaluate(() => localStorage.getItem('real:seeded-ml-runs'))).toBe('real-sentinel');
 
   await page.goto('/?demo=1');
   await expect(page.getByLabel('Demo mode')).toContainText('Demo — sample data, nothing is saved.');
   await expect(page.getByRole('heading', { name: 'Read tensor shapes' })).toBeVisible();
   await expect(page.locator('#code')).toBeEditable();
-  expect(await page.evaluate(() => localStorage.getItem('demo:seeded-ml-runs'))).toBeNull();
+  expect(await demoRecordValue(page)).toBeNull();
   expect(await page.evaluate(() => localStorage.getItem('real:seeded-ml-runs'))).toBe('real-sentinel');
   await page.getByRole('button', { name: 'Reset demo' }).click();
-  expect(await page.evaluate(() => localStorage.getItem('demo:seeded-ml-runs'))).toBeNull();
+  expect(await demoRecordValue(page)).toBeNull();
   expect(await page.evaluate(() => localStorage.getItem('real:seeded-ml-runs'))).toBe('real-sentinel');
 });
 
@@ -214,7 +261,7 @@ test('@regression:one-click-check then saves only a demo run record', async ({ p
   await page.locator('#code').fill(`${starter}\nx.shape`);
   await page.getByRole('button', { name: 'Check my answer' }).click();
   await expect(page.getByText('Passed. Saved a replayable record with seed 11.')).toBeVisible();
-  expect(await page.evaluate(() => localStorage.getItem('demo:seeded-ml-runs'))).not.toBeNull();
+  expect(await demoRecordValue(page)).not.toBeNull();
   expect(await page.evaluate(() => localStorage.getItem('real:seeded-ml-runs'))).toBe('real-sentinel');
 });
 
@@ -382,7 +429,7 @@ test('@claim:scope-limits the lab has no hosting, ranking, or generated-solution
 
 test('@claim:real-workbench Open your real workbench opens the isolated real workbench', async ({ page }) => {
   await page.goto('/demo');
-  await page.evaluate(() => localStorage.setItem('demo:seeded-ml-runs', 'demo-record'));
+  await page.evaluate(() => sessionStorage.setItem('demo:seeded-ml-runs', 'demo-record'));
   await page.getByRole('link', { name: 'Open your real workbench' }).click();
   await expect(page).toHaveURL(/\/lab$/);
   await expect(page.getByText('YOUR DRILLS')).toBeVisible();
@@ -391,24 +438,24 @@ test('@claim:real-workbench Open your real workbench opens the isolated real wor
   await page.getByRole('button', { name: 'Check my answer' }).click();
   await expect(page.getByText('Passed. Saved a replayable record with seed 11.')).toBeVisible();
   expect(await page.evaluate(() => localStorage.getItem('real:seeded-ml-runs'))).not.toBeNull();
-  expect(await page.evaluate(() => localStorage.getItem('demo:seeded-ml-runs'))).toBeNull();
+  expect(await demoRecordValue(page)).toBeNull();
 });
 
 test('@claim:import-records import validates JSON, previews its count, and rejects duplicates', async ({ page }) => {
   await page.goto('/demo');
   await chooseImport(page, { name: 'bad.json', mimeType: 'application/json', buffer: Buffer.from('{"runs":"not records"}') });
   await expect(page.getByRole('status').filter({ hasText: 'Nothing was imported.' })).toContainText('exported Seeded ML Drills JSON file');
-  expect(await page.evaluate(() => localStorage.getItem('demo:seeded-ml-runs'))).toBeNull();
+  expect(await demoRecordValue(page)).toBeNull();
 
   await chooseImport(page);
   await expect(page.getByText('1 record is ready to import.')).toBeVisible();
-  expect(await page.evaluate(() => localStorage.getItem('demo:seeded-ml-runs'))).toBeNull();
+  expect(await demoRecordValue(page)).toBeNull();
   await page.getByRole('button', { name: 'Import 1 record' }).click();
   await expect(page.getByText('Imported 1 run record into this demo workbench.')).toBeVisible();
 
   await chooseImport(page);
   await expect(page.getByRole('status').filter({ hasText: 'Nothing was imported.' })).toContainText('duplicate run records');
-  expect(JSON.parse((await page.evaluate(() => localStorage.getItem('demo:seeded-ml-runs')))!).length).toBe(1);
+  expect(JSON.parse((await demoRecordValue(page))!).length).toBe(1);
 });
 
 test('@claim:import-namespace imported records stay in the active demo or real storage namespace', async ({ page, browser }) => {
@@ -416,7 +463,7 @@ test('@claim:import-namespace imported records stay in the active demo or real s
   await page.evaluate(() => localStorage.setItem('real:seeded-ml-runs', 'real-sentinel'));
   await chooseImport(page, importFile('demo-only-record'));
   await page.getByRole('button', { name: 'Import 1 record' }).click();
-  const storage = await page.evaluate(() => ({ demo: localStorage.getItem('demo:seeded-ml-runs'), real: localStorage.getItem('real:seeded-ml-runs') }));
+  const storage = await page.evaluate(() => ({ demo: sessionStorage.getItem('demo:seeded-ml-runs'), real: localStorage.getItem('real:seeded-ml-runs') }));
   expect(JSON.parse(storage.demo!)[0].id).toBe('demo-only-record');
   expect(storage.real).toBe('real-sentinel');
 
@@ -424,10 +471,10 @@ test('@claim:import-namespace imported records stay in the active demo or real s
   const realPage = await realContext.newPage();
   try {
     await realPage.goto('/lab');
-    await realPage.evaluate(() => localStorage.setItem('demo:seeded-ml-runs', 'demo-sentinel'));
+    await realPage.evaluate(() => sessionStorage.setItem('demo:seeded-ml-runs', 'demo-sentinel'));
     await chooseImport(realPage, importFile('real-only-record'));
     await realPage.getByRole('button', { name: 'Import 1 record' }).click();
-    const realStorage = await realPage.evaluate(() => ({ demo: localStorage.getItem('demo:seeded-ml-runs'), real: localStorage.getItem('real:seeded-ml-runs') }));
+    const realStorage = await realPage.evaluate(() => ({ demo: sessionStorage.getItem('demo:seeded-ml-runs'), real: localStorage.getItem('real:seeded-ml-runs') }));
     expect(realStorage.demo).toBe('demo-sentinel');
     expect(JSON.parse(realStorage.real!)[0].id).toBe('real-only-record');
   } finally {
@@ -479,7 +526,7 @@ test('@claim:five-drill-practice-set counts five distinct passed drills, then pe
   await expect(page.locator('.lab-top strong')).toHaveText('5 / 5 passed');
   await page.getByRole('button', { name: 'Reset demo' }).click();
   await expect(page.locator('.lab-top strong')).toHaveText('0 / 5 passed');
-  expect(await page.evaluate(() => localStorage.getItem('demo:seeded-ml-runs'))).toBeNull();
+  expect(await demoRecordValue(page)).toBeNull();
   expect(await page.evaluate(() => localStorage.getItem('real:seeded-ml-runs'))).toBe('real-sentinel');
 });
 
@@ -497,9 +544,9 @@ test('@regression:demo-query direct demo query opens and resets the isolated sam
   await expect(page.getByRole('heading', { name: 'Run one seeded drill.' })).toBeVisible();
   await expect(page.getByText('DEMO DRILL')).toBeVisible();
   await expect(page.getByLabel('Demo mode')).toContainText('Demo — sample data, nothing is saved.');
-  await page.evaluate(() => localStorage.setItem('demo:seeded-ml-runs', '[{"id":"sample"}]'));
+  await page.evaluate(() => sessionStorage.setItem('demo:seeded-ml-runs', '[{"id":"sample"}]'));
   await page.getByRole('button', { name: 'Reset demo' }).click();
-  expect(await page.evaluate(() => localStorage.getItem('demo:seeded-ml-runs'))).toBeNull();
+  expect(await demoRecordValue(page)).toBeNull();
 });
 
 test('@regression:starter-seed supplied starter defines its seed before it is used', async ({ page }) => {
@@ -641,7 +688,7 @@ test('@regression:sw-navigation a stale cached demo document is refreshed online
   await page.goto('/demo');
   await page.evaluate(async () => {
     await navigator.serviceWorker.ready;
-    const cache = await caches.open('seeded-ml-drills-v6');
+    const cache = await caches.open('seeded-ml-drills-v7');
     await cache.put('/demo', new Response('<title>stale demo</title><p>stale</p>', { headers: { 'content-type': 'text/html' } }));
   });
   await page.reload();
