@@ -45,9 +45,9 @@ No earlier `.factory/review-*.md` or `.factory/polish-*.md` file existed. The ea
 
 ## Verification summary
 
-- Clean clone: `/tmp/promptless-polish-1-WxABXj/repo`.
+- Final clean clone: `/tmp/promptless-polish-final-G5yI0Z/repo` at commit `8d65f0d6f9bf49e06179c13baf8564bb96caca2d`.
 - Every one of the 17 commands in `.factory/claims.json` ran separately and selected exactly one passing tagged test.
-- Full local browser suite: 36/36 passed before the final copy guard; the final suite contains 37 tests.
+- Full local browser suite: 37/37 passed from the final clean clone.
 - Live browser suite: 5/5 passed after deployment, including axe on every public route.
 - `verify-url.sh`: `/`, `/demo`, and `/?demo=1` passed locally and live with zero console errors.
 - Live Lighthouse mobile: Performance 100, Accessibility 100, Best Practices 100, SEO 100; FCP 0.8 s, LCP 1.7 s, TBT 40 ms, CLS 0, transfer 169 KiB. Report: `.factory/qa-evidence/polish1-live-lighthouse.json`.

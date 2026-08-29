@@ -28,7 +28,7 @@ npm run build
 npm audit --omit=dev
 ```
 
-- Clean clone used: `/tmp/promptless-polish-1-WxABXj/repo` for the repair commit, followed by a final clean-clone rerun recorded before handoff.
+- Final clean clone: `/tmp/promptless-polish-final-G5yI0Z/repo` at commit `8d65f0d6f9bf49e06179c13baf8564bb96caca2d`.
 - Every command in `.factory/claims.json` ran independently: 17/17 passed and each selected exactly one test.
 - Full Playwright suite: 37/37 passed. It covers all 30 evaluator contracts, demo and real storage isolation, export/replay, offline refresh and reload, keyboard/focus behavior, mobile reflow, touch targets, security headers, real routing/404, privacy requests, and serious/critical axe checks.
 - TypeScript lint and production build passed. `dist/index.html` is present.
