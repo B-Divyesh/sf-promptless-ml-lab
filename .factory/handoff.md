@@ -1,58 +1,61 @@
-# Handoff — adversarial first-read review 6
+# Handoff — adversarial polish round 6
 
-## Result: FAIL
+## Result: PASS
 
-**Review commit base:** `3ada5ed80056c44cd36556ed467cf1243e591f98`
-
-**Live build:** `9270a26f9b22`
-
+**Repair implementation commit:** `173484dceffc2e65f0d9cd46db19f42dc9012c98`
+**Deployed build:** `173484dceffc`
 **Live URL:** https://promptless-ml-lab.sociobot.in
+**Static Web Apps deployment:** `b5c74af0-77a7-4c23-9e72-8a80d3170396`
 
-**Reviewed:** 2026-08-29 UTC
+## What changed
 
-No product code was changed. The completed review is in
-`.factory/review-6.md`.
+Closed F-6-1, the sole remaining cumulative finding. Demo records now use the
+`demo:seeded-ml-runs` key in session storage. A single route-boundary cleanup
+path discards them whenever a visitor leaves demo mode through Home, Privacy,
+browser Back, or Open your real workbench. Reset uses the same cleanup helper.
+The helper also removes the legacy local-storage demo key from earlier builds.
+Real workbench records remain isolated in `real:seeded-ml-runs` local storage.
 
-## Finding left for the next worker
+The `demo-reset` claim test now covers every exit path, re-entry with an empty
+demo, Reset, a legacy-key absence, and an unchanged real-workbench sentinel.
+README, Privacy, demo documentation, copy audit, catalog description, service
+worker cache version, and live verification coverage were updated to match.
 
-F-6-1 is blocking. Demo records are correctly isolated from real records, but
-they remain in `demo:seeded-ml-runs` after leaving `/demo` through the Home
-wordmark, Privacy link, or browser Back. This conflicts with the persistent
-“Demo — sample data, nothing is saved” banner and the discard-on-exit demo
-contract. `Reset demo` and `Open your real workbench` do clear the demo key.
+## Verification
 
-The repair should use session-scoped demo storage and one centralized cleanup
-path for every demo-to-non-demo transition, including history navigation. The
-tagged demo claim must cover Home, Privacy, Back, real-workbench exit, reset,
-re-entry, and preservation of a real-key sentinel.
+Clean clone: `/tmp/promptless-polish6-clean-jFNHHy/repo` at the repair commit.
 
-## Verification completed
+- `npm ci` passed with 0 vulnerabilities.
+- Every exact command in the 23-entry `.factory/claims.json` manifest ran
+  separately and selected one passing tagged test.
+- Clean-clone `npm test` passed **48/48**.
+- Clean-clone `npm run lint`, `npm run build`, `npm audit --audit-level=high`,
+  and `git diff --check` passed. `dist/index.html` exists. Initial app JS is
+  11.00 kB gzip; CSS is 3.55 kB gzip.
+- Local `verify-url.sh` passed for `/`, `/demo`, `/?demo=1`, `/lab`,
+  `/privacy`, and `/terms`, with zero console errors. Evidence:
+  `.factory/qa-evidence/polish6-local/`.
+- Local Lighthouse: Performance 100, Accessibility 100, Best Practices 100,
+  SEO 100; LCP 1.5 s, TBT 10 ms, CLS 0. Report:
+  `.factory/qa-evidence/polish6-local/lighthouse.json`.
+- After deploying, a fresh live F-6-1 suite passed **1/1**. It created a demo
+  record, exited through Home, Privacy, browser Back, and the real-workbench
+  link in separate flows, then confirmed both demo stores were empty, the real
+  sentinel was unchanged, and re-entered demo was empty. It also passed Reset.
+  Screenshots: `.factory/qa-evidence/polish6-live/demo-home-exit.png` and
+  `.factory/qa-evidence/polish6-live/demo-reset-empty.png`.
+- Live `verify-url.sh` passed for the same six URLs, including route-specific
+  titles, `lang`, one `h1`, one `main`, alt coverage, and no console errors.
+- Live `EXPECTED_BUILD_ID=173484dceffc npx playwright test -c
+  .factory/verification-11.config.ts` passed **5/5**. This checks first read,
+  one-click demo, keyboard, exports/imports/replay, privacy requests, metadata,
+  404, Axe serious/critical violations, focus, reduced motion, mobile reflow,
+  headers, cache policy, service-worker update, and offline saved-record replay.
+- Live Lighthouse: Performance 100, Accessibility 100, Best Practices 100,
+  SEO 100; LCP 1.1 s, TBT 0 ms, CLS 0, transfer 48 KiB. Report:
+  `.factory/qa-evidence/polish6-live/lighthouse.json`.
 
-- Clean clone: `/tmp/promptless-review6-ZodErb/repo` at
-  `3ada5ed80056c44cd36556ed467cf1243e591f98`.
-- `npm ci`: passed; zero vulnerabilities.
-- Every one of the 23 commands in `.factory/claims.json` ran separately and
-  selected one passing tagged test.
-- Full `npm test`: 48/48 passed.
-- `npm run lint`, `npm run build`, and `npm audit --audit-level=high`: passed.
-- Build output: `dist/index.html`; initial JS 10.92 kB gzip; CSS 3.55 kB gzip.
-- Existing clean live acceptance: 5/5 passed at desktop and 390 × 844,
-  including Axe, keyboard, routes, focus, metadata, headers, storage
-  isolation, offline reload/replay, and request logging.
-- Additional live first-read/crawl checks: 2/2 passed. All visible first-screen
-  content fit at 390 × 844; all five internal destinations returned 200; the
-  demo flow made only same-origin GET requests.
-- Additional live discard-on-exit check: failed as expected for Home, Privacy,
-  and browser Back, establishing F-6-1.
-
-## Known gaps
-
-Only F-6-1 was found. All earlier F-1-* through F-5-* findings were rechecked
-in the live site and unchanged product source and remain closed. The repository
-does not contain `.factory/brief.json`; the review used the other stated scope
-sources.
-
-## Reproduce
+## How to run
 
 ```sh
 npm ci
@@ -60,9 +63,17 @@ npm test
 npm run lint
 npm run build
 npm audit --audit-level=high
-EXPECTED_BUILD_ID=9270a26f9b22 npx playwright test -c .factory/verification-11.config.ts
 ```
 
-To reproduce F-6-1 manually: open `/demo`, pass the first drill, leave through
-Home, Privacy, or browser Back, and inspect `demo:seeded-ml-runs` in local
-storage. It remains present after each exit.
+Run the exact claim matrix with the `test` commands in `.factory/claims.json`.
+For deployed verification, run:
+
+```sh
+EXPECTED_BUILD_ID=173484dceffc npx playwright test -c .factory/verification-11.config.ts
+EXPECTED_BUILD_ID=173484dceffc npx playwright test -c .factory/live-polish-6.config.ts
+```
+
+## Known gaps
+
+None. All findings F-1-1 through F-6-1 and the earlier unnumbered regression
+boundaries are covered by the current source and live verification.
