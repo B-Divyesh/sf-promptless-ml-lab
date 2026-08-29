@@ -40,6 +40,20 @@ const intendedDrills = [
   { id: 'save-config', task: 'Create a config dictionary.', answer: '{"seed": SEED, "lr": lr, "epochs": epochs}', shortcut: '{"seed": 0, "lr": 0, "epochs": 0}' }
 ] as const;
 
+function relativeLuminance(color: string) {
+  const channels = color.match(/\d+(?:\.\d+)?/g)?.slice(0, 3).map(Number);
+  if (!channels || channels.length !== 3) throw new Error(`Expected an rgb color, received ${color}`);
+  return channels.map((channel) => {
+    const normalized = channel / 255;
+    return normalized <= 0.04045 ? normalized / 12.92 : ((normalized + 0.055) / 1.055) ** 2.4;
+  }).reduce((luminance, channel, index) => luminance + channel * [0.2126, 0.7152, 0.0722][index], 0);
+}
+
+function contrastRatio(foreground: string, background: string) {
+  const [lighter, darker] = [relativeLuminance(foreground), relativeLuminance(background)].sort((a, b) => b - a);
+  return (lighter + 0.05) / (darker + 0.05);
+}
+
 test('@regression:review-copy required copy and catalog wording stay plain', () => {
   const readme = readFileSync('README.md', 'utf8');
   const source = readFileSync('src/main.ts', 'utf8');
@@ -494,6 +508,32 @@ test('@regression:focus core rerenders retain keyboard focus', async ({ page }) 
   await expect(page.getByRole('button', { name: 'Check my answer' })).toBeFocused();
   await page.locator('#track').selectOption({ label: 'Classification' });
   await expect(page.locator('#track')).toBeFocused();
+});
+
+test('@regression:demo-exit-focus-contrast keyboard focus stays at least 3:1 on the moss banner', async ({ page }) => {
+  for (const viewport of [{ width: 1440, height: 900 }, { width: 390, height: 844 }]) {
+    await page.setViewportSize(viewport);
+    await page.goto('/demo');
+    for (let tab = 0; tab < 7; tab += 1) await page.keyboard.press('Tab');
+
+    const exit = page.getByRole('link', { name: 'Open your real workbench' });
+    await expect(exit).toBeFocused();
+    const focus = await exit.evaluate((node) => {
+      const link = getComputedStyle(node);
+      const banner = getComputedStyle(node.closest('.demo-banner')!);
+      return {
+        outlineColor: link.outlineColor,
+        outlineStyle: link.outlineStyle,
+        outlineWidth: link.outlineWidth,
+        bannerBackground: banner.backgroundColor
+      };
+    });
+
+    expect(focus.outlineStyle).toBe('solid');
+    expect(focus.outlineWidth).toBe('4px');
+    expect(focus.outlineColor).toBe('rgb(255, 255, 255)');
+    expect(contrastRatio(focus.outlineColor, focus.bannerBackground)).toBeGreaterThanOrEqual(3);
+  }
 });
 
 test('@regression:navigation Drills points to the landing catalog and framing is denied', async ({ page }) => {

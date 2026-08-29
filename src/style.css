@@ -1,7 +1,7 @@
 :root {
   --bg:#e6e1d5; --paper:#f5f1e8; --ink:#182019; --muted:#536052;
   --line:#182019; --moss:#315c3c; --moss-light:#d8e2c4; --oxide:#a54b31;
-  --sun:#e8c65d; --focus:#143e99; --shadow:5px 5px 0 #c8c3b7;
+  --sun:#e8c65d; --focus:#143e99; --focus-on-moss:#fff; --shadow:5px 5px 0 #c8c3b7;
 }
 * { box-sizing:border-box; }
 html { background:var(--bg); scroll-behavior:smooth; }
@@ -152,4 +152,5 @@ footer p { max-width:36ch; margin:0; } footer a { display:inline-flex; align-ite
   .record-tools .button,.import-preview .button { width:100%; }
   .hero { min-height:0; }
 }
-.demo-banner .text-button { color:#fff; }.demo-banner .text-button:focus-visible { outline-color:#fff; }
+.demo-banner .text-button { color:#fff; }
+.demo-banner a:focus-visible { outline-color:var(--focus-on-moss); }
