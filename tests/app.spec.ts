@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { drills } from '../src/drills';
 import { drillContracts } from '../src/drill-contracts';
 
@@ -44,15 +44,27 @@ test('@regression:review-copy required copy and catalog wording stay plain', () 
   const readme = readFileSync('README.md', 'utf8');
   const source = readFileSync('src/main.ts', 'utf8');
   const catalogDescription = readFileSync('.factory/catalog-description.txt', 'utf8').trim();
-  expect(readme).toContain('Seeded ML Drills gives self-taught ML learners one small PyTorch task with an\nimmediate check.');
+  expect(readme).toContain('Seeded ML Drills gives self-taught ML learners one short PyTorch drill with an\nimmediate check.');
   expect(readme).toContain('You do not need to choose a project or ask a chatbot.');
   expect(source).toContain('Choose a short ML drill.');
   expect(source).toContain('How the drills work');
   expect(source).toContain('Check my answer');
   expect(source).toContain('Open your real workbench');
-  expect(`${readme}\n${source}`).not.toMatch(/concept-sized|Build the habit|One small trace|Hero art is generated original artwork|Run hidden checks|Start for real/);
+  expect(`${readme}\n${source}`).not.toMatch(/concept-sized|Build the habit|One small trace|Hero art is generated original artwork|Run hidden checks|Start for real|THE WORKBENCH|supported expression|application shell|fixed exercise/i);
+  expect(source).toContain('The checker accepts the PyTorch operation named in each drill.');
+  expect(source).toContain('It reruns the same seven results from the same inputs.');
   expect(catalogDescription.length).toBeLessThanOrEqual(120);
   expect(catalogDescription).toMatch(/^Practice\b/);
+});
+
+test('@regression:plain-words visible copy stays short and avoids banned marketing words', async ({ page }) => {
+  const banned = /\b(leverage|seamless|effortless|robust|powerful|intuitive|reimagine|supercharge|unlock|delightful|journey|ecosystem|AI-powered)\b/i;
+  for (const path of ['/', '/demo', '/privacy', '/terms']) {
+    await page.goto(path);
+    const units = (await page.locator('body').innerText()).split(/\n+|(?<=[.!?])\s+/).map((unit) => unit.trim()).filter(Boolean);
+    expect(units.filter((unit) => unit.split(/\s+/).length > 22), `${path} has overlong copy`).toEqual([]);
+    expect(units.filter((unit) => banned.test(unit)), `${path} has banned wording`).toEqual([]);
+  }
 });
 
 async function passFirstDrill(page: import('@playwright/test').Page) {
@@ -69,6 +81,25 @@ async function exportedRuns(page: import('@playwright/test').Page) {
   const stream = await (await download).createReadStream();
   let body = ''; for await (const part of stream!) body += part.toString();
   return JSON.parse(body).runs;
+}
+
+function importFile(id = 'imported-tensor-shape') {
+  return {
+    name: 'seeded-ml-drills-records.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from(JSON.stringify({
+      format: 'seeded-ml-drills/run-records', version: 1, mode: 'real', runs: [{
+        id, drillId: 'tensor-shapes', at: '2026-08-29T10:00:00.000Z', seed: 11,
+        pass: true, code: `${drills[0].starter}\nx.shape`, trace: [0.9, 0.7, 0.55, 0.4, 0.3, 0.2, 0.1], version: 1
+      }]
+    }))
+  };
+}
+
+async function chooseImport(page: import('@playwright/test').Page, file = importFile()) {
+  const chooser = page.waitForEvent('filechooser');
+  await page.getByRole('button', { name: 'Import run records' }).click();
+  await (await chooser).setFiles(file);
 }
 
 test('demo records can be passed and replayed', async ({ page }) => {
@@ -99,12 +130,13 @@ test('@claim:demo-reset reset only clears demo records', async ({ page }) => {
   await page.evaluate(() => localStorage.setItem('real:seeded-ml-runs', 'real-sentinel'));
   await passFirstDrill(page);
   await page.getByRole('button', { name: 'Reset demo' }).click();
-  await expect(page.getByText('No records yet. Pass a check and the result will appear here.')).toBeVisible();
+  await expect(page.getByText('No records yet. Pass a check or import records to add one here.')).toBeVisible();
   expect(await page.evaluate(() => localStorage.getItem('demo:seeded-ml-runs'))).toBeNull();
   expect(await page.evaluate(() => localStorage.getItem('real:seeded-ml-runs'))).toBe('real-sentinel');
 });
 
 test('@claim:one-click-sample landing opens a populated isolated demo', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');
   await page.evaluate(() => localStorage.setItem('real:seeded-ml-runs', 'real-sentinel'));
   await page.getByRole('link', { name: 'Try it with sample data' }).click();
@@ -115,6 +147,11 @@ test('@claim:one-click-sample landing opens a populated isolated demo', async ({
   await expect(page.getByText('8 samples × 3 features')).toBeVisible();
   await expect(page.getByText('Return the shape of x.')).toBeVisible();
   await expect(page.getByText('(8, 3)', { exact: true })).toBeVisible();
+  for (const locator of [page.getByRole('heading', { name: 'Read tensor shapes' }), page.getByText('8 samples × 3 features'), page.getByText('(8, 3)', { exact: true }), page.locator('#code')]) {
+    const box = await locator.boundingBox();
+    expect(box).not.toBeNull();
+    expect(box!.y + Math.min(box!.height, 1), 'sample content should intersect the first mobile viewport').toBeLessThanOrEqual(844);
+  }
   const starter = await page.locator('#code').inputValue();
   await page.locator('#code').fill(`${starter}\nx.shape`);
   await page.getByRole('button', { name: 'Check my answer' }).click();
@@ -134,6 +171,29 @@ test('@claim:no-third-party-runtime landing and demo load only same-origin resou
   expect(requests.every((request) => new URL(request.url()).origin === 'http://127.0.0.1:4173')).toBeTruthy();
   expect(requests.filter((request) => ['script', 'stylesheet', 'font'].includes(request.resourceType()))
     .every((request) => new URL(request.url()).origin === 'http://127.0.0.1:4173')).toBeTruthy();
+});
+
+test('@claim:build-output build creates the static deployment and expected assets', () => {
+  expect(existsSync('dist/index.html')).toBeTruthy();
+  expect(existsSync('dist/staticwebapp.config.json')).toBeTruthy();
+  expect(existsSync('dist/404.html')).toBeTruthy();
+  expect(existsSync('dist/sw.js')).toBeTruthy();
+  expect(readdirSync('dist/assets').some((file) => file.endsWith('.js'))).toBeTruthy();
+  expect(readFileSync('dist/index.html', 'utf8')).toContain('<div id="app"></div>');
+});
+
+test('@claim:deployment-config built config supports direct links, 404s, caching, and browser security headers', async ({ page }) => {
+  const config = JSON.parse(readFileSync('dist/staticwebapp.config.json', 'utf8'));
+  expect(config.routes).toEqual(expect.arrayContaining([
+    expect.objectContaining({ route: '/demo', rewrite: '/index.html' }),
+    expect.objectContaining({ route: '/privacy', rewrite: '/index.html' }),
+    expect.objectContaining({ route: '/assets/*', headers: expect.objectContaining({ 'Cache-Control': expect.stringContaining('immutable') }) })
+  ]));
+  expect(config.responseOverrides['404']).toEqual({ rewrite: '/404.html', statusCode: 404 });
+  expect(config.globalHeaders['Content-Security-Policy']).toContain("frame-ancestors 'none'");
+  expect(config.globalHeaders['X-Content-Type-Options']).toBe('nosniff');
+  expect((await page.request.get('/privacy')).status()).toBe(200);
+  expect((await page.request.get('/missing-config-check')).status()).toBe(404);
 });
 
 test('@claim:offline-reload demo reloads offline after first visit', async ({ page, context }) => {
@@ -242,7 +302,7 @@ test('@claim:no-chat-required a drill completes without chat, an account, or a r
 
 test('@claim:scope-limits the lab has no hosting, ranking, or generated-solution flow', async ({ page }) => {
   await page.goto('/demo');
-  await expect(page.locator('input[type="file"]')).toHaveCount(0);
+  await expect(page.locator('input[type="file"]:not(#import-records)')).toHaveCount(0);
   await expect(page.getByRole('button', { name: /host|deploy|rank|leaderboard|generate|show solution/i })).toHaveCount(0);
   const drill = drills[0];
   await page.locator('#code').fill(`${drill.starter}\n[8, 3]`);
@@ -263,7 +323,7 @@ test('@claim:real-workbench Open your real workbench opens the isolated real wor
   await page.evaluate(() => localStorage.setItem('demo:seeded-ml-runs', 'demo-record'));
   await page.getByRole('link', { name: 'Open your real workbench' }).click();
   await expect(page).toHaveURL(/\/lab$/);
-  await expect(page.getByText('YOUR WORKBENCH')).toBeVisible();
+  await expect(page.getByText('YOUR DRILLS')).toBeVisible();
   const starter = await page.locator('#code').inputValue();
   await page.locator('#code').fill(`${starter}\nx.shape`);
   await page.getByRole('button', { name: 'Check my answer' }).click();
@@ -272,10 +332,46 @@ test('@claim:real-workbench Open your real workbench opens the isolated real wor
   expect(await page.evaluate(() => localStorage.getItem('demo:seeded-ml-runs'))).toBeNull();
 });
 
+test('@claim:import-records import validates JSON, previews its count, and rejects duplicates', async ({ page }) => {
+  await page.goto('/demo');
+  await chooseImport(page, { name: 'bad.json', mimeType: 'application/json', buffer: Buffer.from('{"runs":"not records"}') });
+  await expect(page.getByRole('status').filter({ hasText: 'Nothing was imported.' })).toContainText('exported Seeded ML Drills JSON file');
+  expect(await page.evaluate(() => localStorage.getItem('demo:seeded-ml-runs'))).toBeNull();
+
+  await chooseImport(page);
+  await expect(page.getByText('1 record is ready to import.')).toBeVisible();
+  expect(await page.evaluate(() => localStorage.getItem('demo:seeded-ml-runs'))).toBeNull();
+  await page.getByRole('button', { name: 'Import 1 record' }).click();
+  await expect(page.getByText('Imported 1 run record into this demo workbench.')).toBeVisible();
+
+  await chooseImport(page);
+  await expect(page.getByRole('status').filter({ hasText: 'Nothing was imported.' })).toContainText('duplicate run records');
+  expect(JSON.parse((await page.evaluate(() => localStorage.getItem('demo:seeded-ml-runs')))!).length).toBe(1);
+});
+
+test('@claim:import-namespace imported records stay in the active storage namespace', async ({ page }) => {
+  await page.goto('/demo');
+  await page.evaluate(() => localStorage.setItem('real:seeded-ml-runs', 'real-sentinel'));
+  await chooseImport(page, importFile('demo-only-record'));
+  await page.getByRole('button', { name: 'Import 1 record' }).click();
+  const storage = await page.evaluate(() => ({ demo: localStorage.getItem('demo:seeded-ml-runs'), real: localStorage.getItem('real:seeded-ml-runs') }));
+  expect(JSON.parse(storage.demo!)[0].id).toBe('demo-only-record');
+  expect(storage.real).toBe('real-sentinel');
+});
+
+test('@claim:import-replay an imported run record can be replayed', async ({ page }) => {
+  await page.goto('/demo');
+  await chooseImport(page, importFile('replay-import'));
+  await page.getByRole('button', { name: 'Import 1 record' }).click();
+  await page.getByRole('button', { name: 'Replay', exact: true }).click();
+  await expect(page.locator('#code')).toHaveValue(/x\.shape$/);
+  await expect(page.getByText('Replay checked the saved source: passed with seed 11.')).toBeVisible();
+});
+
 test('@regression:demo-query direct demo query opens and resets the isolated sample workbench', async ({ page }) => {
   await page.goto('/?demo=1');
   await expect(page.getByRole('heading', { name: 'Run one seeded drill.' })).toBeVisible();
-  await expect(page.getByText('DEMO WORKBENCH')).toBeVisible();
+  await expect(page.getByText('DEMO DRILL')).toBeVisible();
   await expect(page.getByLabel('Demo mode')).toContainText('Demo — sample data, nothing is saved.');
   await page.evaluate(() => localStorage.setItem('demo:seeded-ml-runs', '[{"id":"sample"}]'));
   await page.getByRole('button', { name: 'Reset demo' }).click();
@@ -374,7 +470,7 @@ test('@regression:sw-navigation a stale cached demo document is refreshed online
   await page.goto('/demo');
   await page.evaluate(async () => {
     await navigator.serviceWorker.ready;
-    const cache = await caches.open('seeded-ml-drills-v5');
+    const cache = await caches.open('seeded-ml-drills-v6');
     await cache.put('/demo', new Response('<title>stale demo</title><p>stale</p>', { headers: { 'content-type': 'text/html' } }));
   });
   await page.reload();

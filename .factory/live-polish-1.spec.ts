@@ -76,7 +76,7 @@ test('query demo, real exit, and historic failure boundaries work live', async (
 
   await page.getByRole('link', { name: 'Open your real workbench' }).click();
   await expect(page).toHaveURL(`${origin}/lab`);
-  await expect(page.getByText('YOUR WORKBENCH')).toBeVisible();
+  await expect(page.getByText('YOUR DRILLS')).toBeVisible();
   expect(await page.evaluate(() => localStorage.getItem('demo:seeded-ml-runs'))).toBeNull();
 
   await page.goto('/demo');

@@ -1,6 +1,9 @@
-# Landing copy audit
+# Copy audit — polish round 2
 
-## Visible landing copy
+Counts treat hyphenated terms, paths, and version strings as one word. No
+visitor-facing unit exceeds 22 words or uses a banned marketing word.
+
+## Landing page
 
 | Copy unit | Words | Flag |
 |---|---:|---|
@@ -11,16 +14,16 @@
 | Privacy | 1 | — |
 | FIXED SEEDS / NO CHAT REQUIRED | 6 | — |
 | Practice reproducible ML models. | 4 | — |
-| For self-taught learners who need one small model task and a check now. | 13 | — |
+| For self-taught learners who need one short ML drill and a check now. | 13 | — |
 | Try it with sample data | 5 | — |
 | Opens a seeded drill and local run record. | 8 | — |
 | Free. | 1 | — |
 | All 30 drills are open. | 5 | — |
 | Runs stay in this browser. | 5 | — |
 | Works offline after your first visit. | 6 | — |
-| THE WORKBENCH | 2 | — |
+| A concrete workbench with moss growing along a plotted learning curve. | 11 | — |
 | Choose a short ML drill. | 5 | — |
-| Each drill checks its stated operation against fixed exercise data. | 10 | — |
+| Each drill checks its stated operation against fixed drill data. | 10 | — |
 | Open the 30 drills | 4 | — |
 | Estimated 6–10 minutes each | 4 | — |
 | How the drills work | 4 | — |
@@ -32,32 +35,55 @@
 | Export the run when the check passes. | 7 | — |
 | What this lab does not do. | 6 | — |
 | It does not host models, rank people, or give generated solutions. | 11 | — |
-| Checks evaluate a supported answer line against fixed exercise data and replay a deterministic trace. | 15 | — |
+| The checker accepts the PyTorch operation named in each drill. | 10 | — |
+| It reruns the same seven results from the same inputs. | 10 | — |
 | It does not execute arbitrary Python or PyTorch. | 8 | — |
 | Short ML practice with fixed inputs. | 6 | — |
 | Terms | 1 | — |
 | Built by Param Factory | 4 | — |
 
-## Reviewed workbench controls
+## Workbench and import controls
 
 | Copy unit | Words | Flag |
 |---|---:|---|
-| Check my answer | 3 | — |
-| Restore starter | 2 | — |
+| Demo — sample data, nothing is saved. | 6 | — |
 | Reset demo | 2 | — |
 | Open your real workbench | 4 | — |
+| Run one seeded drill. | 4 | — |
+| Complete five distinct drills for one practice set. | 8 | — |
+| Read tensor shapes | 3 | — |
+| 8 samples × 3 features | 5 | — |
+| Return the shape of x. | 6 | — |
+| Your PyTorch line | 3 | — |
+| Check my answer | 3 | — |
+| Restore starter | 2 | — |
+| Seven repeated results | 3 | — |
+| Replayable run records | 3 | — |
+| Import run records | 3 | — |
 | Export run records | 3 | — |
+| 1 record is ready to import. | 6 | — |
+| Import 1 record | 3 | — |
+| Cancel import | 2 | — |
+| Choose another drill | 3 | — |
 
-No copy unit exceeds 22 words. No banned wording appears. The first screen states the job, audience, sample action, next result, price, storage, and offline behavior.
+## Review finding rewrites
+
+- “Task,” “exercise,” “fixture,” “supported expression,” “contract,” and
+  “application shell” no longer name the selectable drill or explain its
+  visitor-facing behavior.
+- “THE WORKBENCH” was removed from the landing page.
+- The README uses sentences of 22 words or fewer.
+- `@regression:review-copy` rejects every retired phrase and
+  `@regression:plain-words` checks visible sentence lengths and banned words.
 
 ## Terminology
 
 | Concept | Product word |
 |---|---|
-| Short exercise | drill |
-| Fixed random input | seed |
-| Tiny fixed input | dataset |
+| Selectable practice unit | drill |
+| Instruction within a drill | task |
+| Tiny fixed data | inputs or dataset |
 | Saved outcome | run record |
-| Result sequence | trace |
+| Seven repeated metric values | results |
 | Sample-only mode | demo |
 | Personal, non-demo workspace | real workbench |

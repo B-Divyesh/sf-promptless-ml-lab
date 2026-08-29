@@ -14,6 +14,27 @@
     "sandbox": "fresh demo; pass one drill; download JSON and assert seed, pass state, and seven trace points"
   },
   {
+    "id": "import-records",
+    "claim": "The import checks exported JSON and previews the record count before saving.",
+    "where": "workbench import control, README",
+    "test": "npm test -- --grep @claim:import-records",
+    "sandbox": "fresh demo; reject malformed JSON; preview one valid record before confirmation; import it; reject the same record as a duplicate"
+  },
+  {
+    "id": "import-namespace",
+    "claim": "Imported records are saved only in the active workbench.",
+    "where": "workbench import status, demo documentation, README",
+    "test": "npm test -- --grep @claim:import-namespace",
+    "sandbox": "fresh demo with a real-workbench sentinel; import one record; assert only demo storage changes"
+  },
+  {
+    "id": "import-replay",
+    "claim": "Imported run records can be replayed.",
+    "where": "workbench records, README",
+    "test": "npm test -- --grep @claim:import-replay",
+    "sandbox": "fresh demo; import a known passing tensor-shape record; replay it and assert the saved source still passes"
+  },
+  {
     "id": "demo-reset",
     "claim": "Demo — sample data, nothing is saved.",
     "where": "demo banner",
@@ -35,6 +56,20 @@
     "sandbox": "fresh landing and demo navigation; record all requests and assert every resource, including scripts, styles, and fonts, is same-origin"
   },
   {
+    "id": "build-output",
+    "claim": "The build creates dist/index.html and the static deployment assets.",
+    "where": "README Test and build",
+    "test": "npm test -- --grep @claim:build-output",
+    "sandbox": "clean test run builds first; assert dist/index.html, built JavaScript, service worker, 404 page, and deployment config exist"
+  },
+  {
+    "id": "deployment-config",
+    "claim": "The built config supports direct links, the 404 page, caching, and browser security headers.",
+    "where": "README Deploy",
+    "test": "npm test -- --grep @claim:deployment-config",
+    "sandbox": "inspect dist/staticwebapp.config.json; assert direct-route rewrites, 404 override, immutable asset rule, CSP and nosniff; request a direct route and missing route"
+  },
+  {
     "id": "offline-reload",
     "claim": "Works offline after your first visit.",
     "where": "landing facts, workbench status",
@@ -50,28 +85,28 @@
   },
   {
     "id": "catalog-evaluator",
-    "claim": "Each of the 30 drills checks its stated operation against fixed exercise data.",
+    "claim": "Each of the 30 drills checks its stated operation against fixed drill data.",
     "where": "landing catalog, workbench, README",
     "test": "npm test -- --grep @claim:catalog-evaluator",
     "sandbox": "fresh demo; compare every visible task with an independently declared specification, submit that specification's intended operation and assert pass, then submit its independently declared shortcut and assert rejection"
   },
   {
     "id": "fixture-evaluator",
-    "claim": "The browser check evaluates a supported answer line against fixed exercise data.",
+    "claim": "The browser checks one answer line against each drill's fixed inputs.",
     "where": "landing limitation, README",
     "test": "npm test -- --grep @claim:fixture-evaluator",
     "sandbox": "fresh demo; submit comment-only invalid source and observe Not yet; submit tuple(x.size()) against the fixed shape fixture and observe Passed"
   },
   {
     "id": "fixture-counterexamples",
-    "claim": "The browser check rejects changed fixtures and incomplete expressions.",
+    "claim": "The browser check rejects changed drill inputs and incomplete expressions.",
     "where": "workbench check result, README",
     "test": "npm test -- --grep @claim:fixture-counterexamples",
     "sandbox": "fresh demo; change the 8×3 fixture to 1×1 with x.shape, then submit bare torch.randperm; both must show Not yet"
   },
   {
     "id": "deterministic-trace",
-    "claim": "The browser check replays a deterministic trace.",
+    "claim": "The browser reruns the same seven results from the same inputs.",
     "where": "landing limitation, workbench help, README",
     "test": "npm test -- --grep @claim:deterministic-trace",
     "sandbox": "fresh demo; pass the first drill twice; export records and assert both seven-point traces are identical"
@@ -95,7 +130,7 @@
     "claim": "Open your real workbench opens a separate real workbench.",
     "where": "demo banner, demo documentation, README",
     "test": "npm test -- --grep @claim:real-workbench",
-    "sandbox": "fresh demo; select Start for real; pass one drill; assert the real key is written and the demo key is untouched"
+    "sandbox": "fresh demo; select Open your real workbench; pass one drill; assert the real key is written and the demo key is untouched"
   },
   {
     "id": "free-access",
