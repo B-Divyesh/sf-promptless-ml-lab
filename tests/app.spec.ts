@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
+import { readFileSync } from 'node:fs';
 import { drills } from '../src/drills';
 import { drillContracts } from '../src/drill-contracts';
 
@@ -38,6 +39,21 @@ const intendedDrills = [
   { id: 'replay-seed', task: 'Set the documented seed.', answer: 'torch.manual_seed(SEED)', shortcut: 'torch.rand(4)' },
   { id: 'save-config', task: 'Create a config dictionary.', answer: '{"seed": SEED, "lr": lr, "epochs": epochs}', shortcut: '{"seed": 0, "lr": 0, "epochs": 0}' }
 ] as const;
+
+test('@regression:review-copy required copy and catalog wording stay plain', () => {
+  const readme = readFileSync('README.md', 'utf8');
+  const source = readFileSync('src/main.ts', 'utf8');
+  const catalogDescription = readFileSync('.factory/catalog-description.txt', 'utf8').trim();
+  expect(readme).toContain('Seeded ML Drills gives self-taught ML learners one small PyTorch task with an\nimmediate check.');
+  expect(readme).toContain('You do not need to choose a project or ask a chatbot.');
+  expect(source).toContain('Choose a short ML drill.');
+  expect(source).toContain('How the drills work');
+  expect(source).toContain('Check my answer');
+  expect(source).toContain('Open your real workbench');
+  expect(`${readme}\n${source}`).not.toMatch(/concept-sized|Build the habit|One small trace|Hero art is generated original artwork|Run hidden checks|Start for real/);
+  expect(catalogDescription.length).toBeLessThanOrEqual(120);
+  expect(catalogDescription).toMatch(/^Practice\b/);
+});
 
 async function passFirstDrill(page: import('@playwright/test').Page) {
   await page.goto('/demo');
