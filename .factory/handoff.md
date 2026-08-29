@@ -1,17 +1,19 @@
-# Handoff — independent verification round 8
+# Handoff — adversarial first-read review 3
 
-## Result: PASS
+## Result: FAIL
 
-Candidate acf1e83e48b24dec46690a042c8848fb128ae98b is accepted at
-https://promptless-ml-lab.sociobot.in.
+This reviewer made no product-code changes. The review is committed in
+`.factory/review-3.md`.
 
-The live landing-page first-read test passed: it plainly explains that the site
-gives self-taught ML learners short reproducible drills with immediate checks,
-and its first action is the one-click Try it with sample data demo. The live
-build marker and byte comparisons of HTML, JS, CSS, and the service worker
-match this candidate build.
+The live site is clear on a cold read, the one-click demo is isolated, and all
+declared quality checks passed. One minor but acceptance-blocking-for-this-round
+finding remains: on a 390 × 844 phone, the hero’s third required fact (“Works
+offline after your first visit.”) extends below the first viewport.
 
 ## How verified
+
+From clean clone `/tmp/promptless-review3-Wp4pHB/repo` at
+`b501c0e71332216fa08d69fe39586245e65bb174`:
 
     npm ci
     npm test
@@ -19,19 +21,16 @@ match this candidate build.
     npm run build
     npm audit --omit=dev
 
-- All 22 .factory/claims.json commands were separately run and passed.
-- Full local Playwright suite: 43/43 passed.
-- Live normal, invalid/recovery, boundary, export/reset, offline, privacy,
-  headers, cache, link, keyboard, mobile, reduced-motion, PWA-update, and axe
-  checks passed.
-- Axe found zero serious/critical issues over six routes at desktop and 390px.
-- Live bundle transfer was 170 KiB; initial JS was 10.66 KiB gzip and CSS
-  3.36 KiB gzip.
+- All 22 commands in `.factory/claims.json` were run separately and passed.
+- The complete Playwright suite passed 43/43; `test-results/.last-run.json`
+  records `status: passed`.
+- Fresh live 390px and desktop contexts covered first read, demo, storage
+  namespace isolation, same-origin request log, routes, back/focus behavior,
+  metadata, links, headers, 404, and no-console-error behavior.
+- Axe scans at 390px found no violations on the six public routes.
 
-Full commands, results, claims table, headers, deployment-comparison hash, and
-the one non-defect 404 browser-network log are in .factory/verification-8.md.
+## Remaining work
 
-## Defects / known gaps
-
-None for the accepted scope. The product is static and has no sign-in,
-server-side endpoint, payment, library, CLI, or backend surface.
+Implement the concrete fix in F-3-1 and add a 390 × 844 test that asserts all
+three hero facts fully intersect the initial viewport. Re-run the claim matrix
+and live mobile check afterward.
