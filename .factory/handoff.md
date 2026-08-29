@@ -53,9 +53,17 @@ npm run build
 
 ## Deployment
 
-The source repair is committed and will be pushed and deployed to the existing
-Azure Static Web Apps configuration (`promptless-ml-lab`, `dist/`). Live
-verification details are appended after deployment.
+- Commit `ed382eee2d413f26f386636f90c4476bbbf04015` was pushed to `main` and
+  deployed on 2026-08-29 through `/opt/fleet/lib/deploy-static.sh
+  promptless-ml-lab dist`. Azure deployment `b39f85b2-34d9-422b-b14e-0a1b4244ebb5`
+  completed successfully; `https://promptless-ml-lab.sociobot.in` returned 200.
+- Live `/opt/fleet/lib/verify-url.sh` passed `/`, `/demo`, and `/lab` with zero
+  console/page errors and the expected title/lang/h1/main/alt checks. Evidence
+  is in `.factory/qa-evidence/repair-live*`.
+- Live browser identity check confirmed the deployed build footer is
+  `ed382eee2d41`; it rejected both the changed 1×1 fixture and bare
+  `torch.randperm`. The live unknown route returned HTTP 404 and its recovery
+  target measured 49.5 px high.
 
 ## Known gaps
 
