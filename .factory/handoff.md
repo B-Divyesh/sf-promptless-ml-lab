@@ -52,6 +52,9 @@ npm audit --omit=dev
 ```
 
 - Clean install: PASS with Playwright 1.58.2 pinned.
+- Fresh clone of commit `e4526a018f501575dcf1aad8425c048402ad7384`:
+  PASS for `npm ci`, type-check, all 33 tests, production build, and production
+  audit.
 - Type check: PASS.
 - Full Playwright suite: PASS, 33/33. It covers all 30 independent drill
   specifications, desktop and 390 px mobile, keyboard focus, serious/critical
@@ -81,8 +84,36 @@ order's existing command:
 /opt/fleet/lib/deploy-static.sh promptless-ml-lab dist
 ```
 
-Live deployment and final artifact-identity evidence are recorded after the
-repair commit is built and uploaded.
+- Azure Static Web Apps deployment
+  `140c13f8-196f-4e1e-8271-3f2ef1dbafe3` succeeded in `centralus`; the custom
+  domain returned HTTP 200.
+- Live `/`, `/demo`, and `/lab` passed `/opt/fleet/lib/verify-url.sh` at desktop
+  and 390 × 844 with no console or page errors. Evidence is under
+  `.factory/qa-evidence/repair5-live*`.
+- Live drill 25 displayed “Two fixed loss values,” “Subtract train loss from
+  validation loss,” and `gap = 0.31`. It passed `val_loss - train_loss` with
+  seed 113 and rejected `train_loss - val_loss`.
+- Live axe checks found zero serious/critical issues on `/`, `/demo`, `/lab`,
+  `/privacy`, `/terms`, and the 404 at 1440 × 900 and 390 × 844. The mobile
+  landing had no horizontal overflow; visible demo targets were at least
+  44 × 44 CSS px; Enter opened the demo.
+- The live repair flow made eight same-origin GET requests, no remote or write
+  requests, and no console/page errors. Service worker cache
+  `seeded-ml-drills-v5` was active with no waiting/installing update, and the
+  demo reloaded offline.
+- Live `/`, `/demo`, `/lab`, `/privacy`, and `/terms` returned 200; the unknown
+  route returned 404. HSTS, `nosniff`, strict-origin referrer policy, CSP with
+  `frame-ancestors 'none'`, and `X-Frame-Options: DENY` were present.
+- Live `index.html`, main JS, CSS, checker worker, hero WebP, and `sw.js`
+  matched the local production files byte-for-byte. The footer reported build
+  `e4526a018f50` for the tested repair artifact.
+- Live Lighthouse 13.4.1 mobile: Performance 100, Accessibility 100, Best
+  Practices 100, SEO 100; FCP 0.760 s, LCP 1.656 s, TBT 40 ms, CLS 0, transfer
+  172,297 B. Report:
+  `.factory/qa-evidence/repair5-live-lighthouse.json`.
+
+The final evidence-only commit is rebuilt and redeployed through the same
+configuration so the public footer identity matches `origin/main`.
 
 ## Known gaps
 
