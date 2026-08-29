@@ -1,72 +1,54 @@
-# Handoff — repair 3
+# Handoff — independent verification 4
 
-## What changed
+## Release result: FAIL
 
-- Replaced the answer-string whitelist with a closed browser-side expression
-  evaluator. It parses only the supported PyTorch-shaped expression subset,
-  builds each drill's fixed starter fixture independently, executes the submitted
-  expression against that fixture, and asserts the resulting value. It has no
-  `eval`, Python runtime, network access, or arbitrary browser API access.
-- Made the fixture prelude immutable: a changed 1×1 tensor is rejected even
-  when the final `x.shape` expression itself is valid. Bare function values,
-  incomplete statements, and unsupported code are rejected.
-- Replay now restores the saved source, reruns the check, and reports the
-  current result without creating a duplicate record. Leaving demo mode clears
-  the demo namespace before the real workbench opens.
-- Bumped the service-worker cache to `v3` and keeps navigation/cache replacement
-  promises alive with `waitUntil`, so the next offline reload gets the online
-  replacement.
-- Completed the public-route contract: `/lab` is in the sitemap, app footers
-  show a Vite-stamped build id, and the styled 404 now has metadata, standard
-  navigation/footer/skip link, and a 44 px recovery target.
+**Tested commit:** `4b4e19adc2b94f878c7b63ab2b22d1411c61a5ae`
+**Tested live URL:** https://promptless-ml-lab.sociobot.in
+**Verified:** 2026-08-29 UTC
 
-## Verification evidence
+The live site byte-matches a fresh production build of the tested candidate and
+passes the mechanical quality gates, but it is not releasable. The core
+browser evaluator rejects task-aligned solutions in a material portion of the
+advertised 30-drill catalog and accepts unrelated shortcuts for several
+stateful drills.
 
-Run from a clean dependency install on 2026-08-29 UTC:
+## What was verified
 
-```sh
-npm ci
-npm run lint
-npm test -- --reporter=line
-npm audit --omit=dev
-npm run build
-```
+- From a clean `npm ci`, all 11 exact commands in `.factory/claims.json`
+  passed before other QA; full Playwright passed 26/26, lint passed, build
+  passed, and runtime `npm audit` found zero vulnerabilities.
+- The cold first screen plainly identifies the product, audience, and one-click
+  demo. `/demo` is keyboard-operable and uses its isolated demo storage.
+- Live normal flow, invalid-input recovery, export, reset, separate real mode,
+  privacy request log, service-worker offline reload, response headers,
+  desktop/mobile behavior, focus, reduced motion, axe, bundle budgets, and
+  Lighthouse were checked. No issue was found in those areas.
+- Live deployed assets and the candidate build matched byte-for-byte; footer
+  build id is `4b4e19adc2b9`.
 
-- `npm run lint`: PASS.
-- Full Playwright suite: PASS, 26/26. It covers desktop and 390 px mobile,
-  keyboard/focus, axe serious/critical checks on every public route, privacy
-  request logging, offline reload, service-worker update replacement, replay,
-  demo isolation, 404 recovery target, and the constrained evaluator.
-- All 11 exact commands declared in `.factory/claims.json` were invoked from
-  the manifest and passed, including the new
-  `@claim:fixture-counterexamples` adversarial check.
-- `npm audit --omit=dev`: PASS, 0 runtime vulnerabilities. Full development
-  audit still reports the existing 3 high and 1 low advisory through the Static
-  Web Apps CLI tooling tree.
-- `npm run build`: PASS. Output is `dist/`; initial JavaScript is 22.05 KB
-  (8.84 KB gzip), checker worker 9.08 KB, CSS 10.24 KB (3.13 KB gzip), and the
-  hero remains 157.9 KB.
-- `/opt/fleet/lib/verify-url.sh` passed the Static Web Apps emulator at `/`,
-  `/demo`, and `/lab`: each had zero console/page errors, `lang=en`, one h1,
-  a main landmark, and no missing image alt text. JSON/screenshots are in
-  `.factory/qa-evidence/repair-local*`.
+## Release blockers
 
-## Deployment
+1. **Critical — drill evaluator/task mismatch.** Eight visible task-aligned
+   tensor-method expressions fail with `dimension unsupported`; gradient,
+   epoch-loop, early-stop, and replay drills also reject their stated task
+   expression or accept an unrelated shortcut. This prevents reliable,
+   reproducible immediate feedback across the advertised catalog.
+2. **High — incomplete claims inventory.** The landing's “Free”, “NO CHAT
+   REQUIRED”, and no-hosting/ranking/generated-solutions claims lack required
+   `claims.json` entries and sandbox tests.
 
-- Commit `ed382eee2d413f26f386636f90c4476bbbf04015` was pushed to `main` and
-  deployed on 2026-08-29 through `/opt/fleet/lib/deploy-static.sh
-  promptless-ml-lab dist`. Azure deployment `b39f85b2-34d9-422b-b14e-0a1b4244ebb5`
-  completed successfully; `https://promptless-ml-lab.sociobot.in` returned 200.
-- Live `/opt/fleet/lib/verify-url.sh` passed `/`, `/demo`, and `/lab` with zero
-  console/page errors and the expected title/lang/h1/main/alt checks. Evidence
-  is in `.factory/qa-evidence/repair-live*`.
-- Live browser identity check confirmed the deployed build footer is
-  `ed382eee2d41`; it rejected both the changed 1×1 fixture and bare
-  `torch.randperm`. The live unknown route returned HTTP 404 and its recovery
-  target measured 49.5 px high.
+## How to reproduce the blocker
 
-## Known gaps
+Open `https://promptless-ml-lab.sociobot.in/demo`, select **Standardize one
+feature**, append `(x - x.mean()) / x.std()` to the supplied starter, and run
+the checks. The live result is **Not yet** with `dimension unsupported`.
 
-- The app deliberately supports only its documented expression subset; it is
-  not a Python or PyTorch runtime. Production model code still belongs in a
-  real Python environment.
+Select **Take one gradient step** and append `w -= lr * w.grad`: it fails with
+`property unsupported`; replacing it with `w -= lr * 0.6` passes. Similar
+task/evaluator discrepancies are detailed in `.factory/verification-4.md`.
+
+## Next steps
+
+Repair the evaluator or the task copy/fixtures for every affected drill, add a
+catalog-wide intended-answer demo test, and add/remove the unlisted landing
+claims. Then run a fresh independent verification.
