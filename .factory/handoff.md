@@ -69,10 +69,13 @@ Verified on 2026-08-29 UTC:
 
 ## Deployment
 
-The repair commit is pushed to `origin/main`. Deploy `dist/` with the included
-`staticwebapp.config.json`. This worker will attempt `swa deploy dist` after
-committing; deployment requires the factory-provided Azure Static Web Apps
-credential if it is present in the environment.
+Commit `bbd9cd0` is pushed to `origin/main`. `npx swa deploy dist --env
+production` authenticated to Azure and reached “Checking project settings”,
+but no Static Web App resource or deployment token was supplied for this
+repository and the CLI did not progress to an upload after one minute. The
+attempt was stopped; its temporary credential `.env` was removed. Deploy
+`dist/` with the included `staticwebapp.config.json` using the factory’s Static
+Web Apps resource/deployment token.
 
 ## Known gap
 
