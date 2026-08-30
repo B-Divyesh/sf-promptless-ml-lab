@@ -1,36 +1,39 @@
-# Handoff — independent verification 14
+# Handoff — adversarial first-read review 7
 
 ## Result: PASS
 
-**Candidate:** `d2fecbe873934600a30601625168580bf83ea6bf`
-**Live URL:** https://promptless-ml-lab.sociobot.in
-**Live build:** `d2fecbe87393` (footer identity and byte-for-byte asset match)
+Review only; no product code was modified.
 
-The candidate is accepted. There are no release-blocking, high, medium, or low defects.
+- Live URL checked: https://promptless-ml-lab.sociobot.in
+- Repository reviewed: 92c4cd74cac16b78873ad43713f1294d40cd82c2
+- Live footer build: d2fecbe87393; later repository commits contain verification documentation only.
 
-## What was independently verified
+## What was done
 
-- First-read landing requirement passed: it plainly states the PyTorch-drill job, self-taught ML audience, and first action. The visible one-click sample opened the isolated seed-11 tensor-shape demo with a persistent demo banner.
-- Required claims gate passed: `.factory/claims.json` exists; all 24 exact manifest commands passed separately from the demo entry point.
-- Clean local checks passed: `npm ci`, `npm test` (49/49), `npm run lint`, `npm run build`, and `npm audit --audit-level=high`.
-- Live normal, invalid, and recovery flows passed: reject invalid answer, complete a fixed drill, save/export/replay its seven-point record, reject bad JSON, preview/import valid JSON, and preserve demo/real storage isolation.
-- The live request log was same-origin GET-only with no record-marker leak; console and page errors were empty.
-- Desktop and 390px mobile passed, including keyboard activation, visible 4px focus, zero horizontal overflow, and reduced motion.
-- Live axe found 0 serious/critical violations across landing, demo, privacy, and terms. PWA update check and offline saved-record reload passed.
-- Live response/security/cache policy, 404 behavior, and build parity passed. Lighthouse mobile scored 99 performance / 100 accessibility / 100 best practices / 100 SEO (LCP 1.2s, CLS 0).
+- Opened the live landing cold in fresh 390 × 844 and desktop contexts. The
+  first viewport states the job, audience, and sample action.
+- Used the live one-click demo, passed the seed-11 drill, and verified demo
+  session storage clears on Privacy exit without changing a real-workbench
+  sentinel.
+- Recorded same-origin-only landing/demo requests.
+- Checked every public route, metadata, headers, internal links, responsive
+  width, and the styled HTTP 404.
+- Read all earlier review/polish/handoff documents and confirmed F-1-* through
+  F-6-1 in live behavior and source.
+- In fresh clone /tmp/promptless-review7-8yR5b2/repo, ran npm ci, every one of
+  the 24 exact claims commands separately, npm test (49 passing), npm run lint,
+  and npm run build.
 
 ## How to verify
 
-```sh
-npm ci
-npm test
-npm run lint
-npm run build
-npm audit --audit-level=high
-```
+    npm ci
+    npm test
+    npm run lint
+    npm run build
 
-Run each `test` command in `.factory/claims.json` separately. The complete independent evidence and exact results are in `.factory/verification-14.md` and `.factory/verification-14-artifacts/`.
+Run every test command from .factory/claims.json separately. The complete
+review and copy audit are in .factory/review-7.md.
 
 ## Known gaps / next steps
 
-None. This static local-first app has no account, payment, server API, package, or CLI surface; rate-limit, Entra identity, backend, and consumer-install checks are not applicable.
+None for this reviewed static local-first build.
